@@ -22,39 +22,39 @@
 // include_once('/home/sl/public_html/sl_init.php'); //公用函式庫
 
 
-u_setvar(&$f_var); // 程式變數設定,全部改用陣列變數,不再用 global u_setvar(&$f_var),需要用&,傳值,可以將值回傳,後面繼續用值
+u_setvar($f_var); // 程式變數設定,全部改用陣列變數,不再用 global u_setvar(&$f_var),需要用&,傳值,可以將值回傳,後面繼續用值
 
-include_once( "/home/TemplatePower/class.TemplatePower.inc.php"  ); 
+include_once( "../TemplatePower/class.TemplatePower.inc.php"  ); 
 $f_var["tp"] = new  TemplatePower ( $f_var['tpl']  );  // 樣版畫面檔
 $f_var["tp"]-> prepare ();
 
-
+/*
 //--------for ajax-----------
   if($_REQUEST['ajax_add'] == 'Y'){
-    u_add_input(&$f_var);
+    u_add_input($f_var);
     exit;
   }
   if( $_REQUEST['add_info']){
     $req = $_REQUEST['add_info'];
-    u_insert(&$f_var,$req);
+    u_insert($f_var,$req);
     exit;
   }
   if( $_REQUEST['ajax_update'] ){
     $req = $_REQUEST['ajax_data'];
-    u_update(&$f_var,$req);
+    u_update($f_var,$req);
     exit;
   }
 //------end ajax -------------
-
+*/
 // include_once($sl_header_php); // header
 
 
 // if( u_chk_master() ){
   // sl_open($f_var['mdb']); // 開啟資料庫
   $f_var["tp"]-> newBlock('tb_css&js');
-  u_list(&$f_var);
+  u_list($f_var);
 
-  mysql_close(); // 關閉資料庫
+  // mysql_close(); // 關閉資料庫
 // }else{
   // sl_errmsg("僅 總務(總公司)及油站負責人 有權限觀看");
 // }
@@ -252,7 +252,7 @@ function u_list($f_var){
     $f_var["tp"]-> assign('tv_value' ,$value);
   }
 
-
+/*
   $sql = "SELECT `itemno`,`item_name`,`block_type`,`field_type`,`default`,`memo`,`b_date`,`b_empno` 
           FROM  {$f_var['mtable']['gasdoc_set']} 
           WHERE `gasdoc_set`.`d_date` = '0000-00-00 00:00:00' ORDER BY `itemno` ASC";
@@ -299,7 +299,7 @@ function u_list($f_var){
     }
 
   }
-
+*/
 }  
 // **************************************************************************
 //  函數名稱: u_setvar()
@@ -308,7 +308,7 @@ function u_list($f_var){
 //  程式設計: Tony
 //  設計日期: 2006.09.27
 // **************************************************************************
-function u_setvar ($f_var){
+function u_setvar (&$f_var){
 
   // post or get data Begin ............................................//
     if(is_array($_REQUEST)){
@@ -325,7 +325,7 @@ function u_setvar ($f_var){
   // 未傳入值之預設值設定 End ..................................................//
 
   
-    $f_var['mphp_name'] = u_showproc(); //程式名稱
+    // $f_var['mphp_name'] = u_showproc(); //程式名稱
     $f_var['show_year'] = '4';
     $f_var['msel_name'] = array('1'=>'新增','2'=>'修改','3'=>'刪除','4'=>'瀏覽','5'=>'查詢','6'=>'未定義','7'=>'列印'); // msel 中文
     $f_var['ie_h_title'] = '油站文管系統項目設定檔'; // 頁面標題
@@ -404,7 +404,7 @@ function u_setvar ($f_var){
       'ename' => 'b_name',
       'cname' => '建檔人',
       'type' => 'p',
-      'value' => $_SESSION['login_name'],
+      'value' => '',
       'readonly' => 'readonly',
       'memo' => '',
     );
