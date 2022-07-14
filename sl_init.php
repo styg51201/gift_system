@@ -5,7 +5,7 @@
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 header("Content-type: text/html; charset=big-5");
 
-$f_var['server_name']  = 'http://'.$_SERVER["SERVER_NAME"];
+$f_var['server_name']  = 'https://'.$_SERVER["SERVER_NAME"];
 
 
 // **************************************************************************
