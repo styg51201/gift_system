@@ -21,7 +21,7 @@
 
 include_once('../sl_init.php'); 
 u_setvar($f_var);
-echo   $f_var['mphp_name'] ;
+echo   $f_var['mphp_name'] .'===';
 // include_once($sl_header_php);
 
 ?>
@@ -319,16 +319,16 @@ function u_setvar(&$f_var) {
   //   }
   // }
 
-  // // 未傳入值之預設值設定 Begin.................................................//
-  // if(!isset($f_var['msel'])){
-  //   $f_var['msel'] = 4;
-  // }
-  // if(!isset($f_var['f_page'])) {
-  //   $f_var['f_page']  = 1;  //頁次
-  // }
-  // if(!isset($f_var['max_page'])) {
-  //   $f_var['max_page']  = 1;  //最大頁次
-  // }
+  // 未傳入值之預設值設定 Begin.................................................//
+  if(!isset($f_var['msel'])){
+    $f_var['msel'] = 4;
+  }
+  if(!isset($f_var['f_page'])) {
+    $f_var['f_page']  = 1;  //頁次
+  }
+  if(!isset($f_var['max_page'])) {
+    $f_var['max_page']  = 1;  //最大頁次
+  }
 
   
   // 未傳入值之預設值設定 End ..................................................//
