@@ -20,7 +20,7 @@
 //¢|¢w¢w¢w¢w¢w¢r¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢w¢}
 
 include_once('../sl_init.php'); 
-u_setvar($f_var);
+// u_setvar($f_var);
 echo 'index_gift';
 // include_once($sl_header_php);
 

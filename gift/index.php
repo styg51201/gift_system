@@ -21,7 +21,7 @@
 
 include_once('../sl_init.php'); 
 // u_setvar($f_var);
-
+echo u_showproc();
 // include_once($sl_header_php);
 
 ?>
