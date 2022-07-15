@@ -19,8 +19,8 @@
 //│設計日期: │2021.04.13                                                   │
 //└─────┴───────────────────────────────┘
 
-// include_once('../sl_init.php'); 
-// u_setvar($f_var);
+include_once('../sl_init.php'); 
+u_setvar($f_var);
 echo 'index_gift';
 // include_once($sl_header_php);
 

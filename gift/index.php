@@ -20,7 +20,7 @@
 //└─────┴───────────────────────────────┘
 
 include_once('../sl_init.php'); 
-u_setvar($f_var);
+// u_setvar($f_var);
 
 // include_once($sl_header_php);
 
@@ -352,7 +352,6 @@ function u_setvar(&$f_var) {
                         '其他設定'=>'gift_config.php',
   );
 
-  return;
 }
 
 
