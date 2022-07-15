@@ -311,13 +311,13 @@ function u_list(&$f_var){
 // **************************************************************************
 function u_setvar(&$f_var) {
 
-  // //echo $_REQUEST.'---------';
-  // if(is_array($_REQUEST)) { // 有資料才處理
-  //   while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
-  //     //echo "$f_fd_name=$f_fd_value----";
-  //     $f_var[$f_fd_name] = $f_fd_value;
-  //   }
-  // }
+  //echo $_REQUEST.'---------';
+  if(is_array($_REQUEST)) { // 有資料才處理
+    while (list($f_fd_name,$f_fd_value) = @each($_REQUEST)) {
+      //echo "$f_fd_name=$f_fd_value----";
+      $f_var[$f_fd_name] = $f_fd_value;
+    }
+  }
 
   // 未傳入值之預設值設定 Begin.................................................//
   if(!isset($f_var['msel'])){
