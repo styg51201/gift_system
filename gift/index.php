@@ -20,8 +20,8 @@
 //└─────┴───────────────────────────────┘
 
 include_once('../sl_init.php'); 
-// u_setvar($f_var);
-echo u_showproc();
+u_setvar($f_var);
+echo   $f_var['mphp_name'] ;
 // include_once($sl_header_php);
 
 ?>
@@ -311,24 +311,24 @@ function u_list(&$f_var){
 // **************************************************************************
 function u_setvar(&$f_var) {
 
-  //echo $_REQUEST.'---------';
-  if(is_array($_REQUEST)) { // 有資料才處理
-    while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
-      //echo "$f_fd_name=$f_fd_value----";
-      $f_var[$f_fd_name] = $f_fd_value;
-    }
-  }
+  // //echo $_REQUEST.'---------';
+  // if(is_array($_REQUEST)) { // 有資料才處理
+  //   while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
+  //     //echo "$f_fd_name=$f_fd_value----";
+  //     $f_var[$f_fd_name] = $f_fd_value;
+  //   }
+  // }
 
-  // 未傳入值之預設值設定 Begin.................................................//
-  if(!isset($f_var['msel'])){
-    $f_var['msel'] = 4;
-  }
-  if(!isset($f_var['f_page'])) {
-    $f_var['f_page']  = 1;  //頁次
-  }
-  if(!isset($f_var['max_page'])) {
-    $f_var['max_page']  = 1;  //最大頁次
-  }
+  // // 未傳入值之預設值設定 Begin.................................................//
+  // if(!isset($f_var['msel'])){
+  //   $f_var['msel'] = 4;
+  // }
+  // if(!isset($f_var['f_page'])) {
+  //   $f_var['f_page']  = 1;  //頁次
+  // }
+  // if(!isset($f_var['max_page'])) {
+  //   $f_var['max_page']  = 1;  //最大頁次
+  // }
 
   
   // 未傳入值之預設值設定 End ..................................................//
