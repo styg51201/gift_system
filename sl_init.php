@@ -5,6 +5,7 @@
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 // error_reporting(E_ALL);
 header("Content-type: text/html; charset=big-5");
+date_default_timezone_set("Asia/Taipei");
 echo date('Y-m-d H:i:s');
  
 
