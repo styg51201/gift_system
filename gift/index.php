@@ -21,8 +21,6 @@
 
 include_once('../sl_init.php'); 
 u_setvar($f_var);
-echo   $f_var['mphp_name'] .'=';
-// include_once($sl_header_php);
 
 ?>
 

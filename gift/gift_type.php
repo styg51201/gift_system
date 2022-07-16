@@ -26,11 +26,10 @@ u_setvar($f_var);
 include_once('../sl_header.php');
 include_once("../TemplatePower/class.TemplatePower.inc.php");
 $f_var["tp"] = new  TemplatePower($f_var['tpl']);
-// $f_var["tp"]-> assignInclude ("tb_sl_tpl_1","/home/sl/public_html/sl_tpl_1.tpl");
 $f_var["tp"]-> prepare();
 
-// include_once('./gift_access.php'); 
 
+// include_once('./gift_access.php'); 
 
 
 $f_var['con_db'] = sl_open($f_var['mdb']); // ¶}±Ò¸ê®Æ®w
@@ -304,7 +303,8 @@ function u_in_scr(&$f_var) {
     $row = mysqli_fetch_assoc($result);
   }
 
-  while( list($key,$val) = each($f_var['fd']) ){
+  
+  foreach($f_var['fd'] as $key => $val){
 
     $f_var["tp"]-> newBlock('tb_ins_tr');
     $f_var["tp"]-> assign("tv_cname",$val['cname']);

@@ -18,18 +18,6 @@ textarea{
 a{
     text-decoration: none;
 }
-div.header{
-    background-color: #fffada;
-    height: 50px;
-    line-height: 50px;
-}
-div.header>p{
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: .1rem;
-    text-align:center;
-    color:orange;
-}
 ul, li{
         list-style: none;
         font-size: inherit;
