@@ -5,6 +5,7 @@
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 // error_reporting(E_ALL);
 header("Content-type: text/html; charset=big-5");
+echo date('Y-m-d H:i:s');
  
 
 $f_var['server_name']  = 'https://'.$_SERVER["SERVER_NAME"];

@@ -207,7 +207,7 @@ function u_save(&$f_var){
     //檔案處理
     if( $_FILES['file']['error'] == 4 ){ //沒上傳圖檔 => $_POST["file"]=抓DB裡原本的檔名
       $row = mysqli_fetch_assoc($result);
-      $_POST["file"] = $row['file'];
+      $file_name = $row['file'];
     }else{ //有上傳 => 記錄檔名,搬移檔案
 
       $_POST['file'] = $f_var['mupload_dir'].$_FILES[ 'file' ]['name']; //儲存路徑+檔名 
@@ -215,7 +215,7 @@ function u_save(&$f_var){
         $f_var["tp"]-> assign("_ROOT.tv_alert",'檔案上傳失敗!!');
         return;
       }
-
+      $file_name = $_FILES[ 'file' ]['name'];
     }
 
     $sql = "UPDATE {$f_var['mtable']['type']}
@@ -225,7 +225,7 @@ function u_save(&$f_var){
                 `company` = '{$_POST["company"]}' ,
                 `name` = '{$_POST["name"]}' ,
                 `price` = '{$_POST["price"]}' ,
-                `file` = '{$_FILES['file']['name']}' ,
+                `file` = '{$file_name}' ,
                 `content` = '{$_POST["content"]}' ,
                 `m_empno`= '{$_SESSION['login_empno']}' ,
                 `m_dept_id`= '{$_SESSION['login_dept_id']}' ,
@@ -266,7 +266,7 @@ function u_save(&$f_var){
   $result = mysqli_query($f_var['con_db'],$sql);
 
   if( $result ){
-    echo sl_jreplace($f_var['mphp_name'].'.php');
+    echo sl_jreplace($f_var['mphp_name'].".php?f_year={$_POST['f_year']}&f_festival={$_POST['f_festival']}");
     // echo '新增成功..';
   }else{
     $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!');
