@@ -266,7 +266,7 @@ function u_save(&$f_var){
   $result = mysqli_query($f_var['con_db'],$sql);
 
   if( $result ){
-    echo sl_jreplace($f_var['mphp_name'].".php?f_year={$_POST['f_year']}&f_festival={$_POST['f_festival']}");
+    echo sl_jreplace($f_var['mphp_name'].".php?f_year={$_POST['year']}&f_festival={$_POST['festival']}");
     // echo '新增成功..';
   }else{
     $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!');
