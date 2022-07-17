@@ -8,6 +8,7 @@ header("Content-type: text/html; charset=big-5");
 date_default_timezone_set("Asia/Taipei");
 echo date('Y-m-d H:i:s');
  
+mysql://b1f0a5048f7c99:8cf99649@us-cdbr-east-06.cleardb.net/heroku_9b5a4845768f930?reconnect=true
 
 $f_var['server_name']  = 'https://'.$_SERVER["SERVER_NAME"];
 
@@ -35,7 +36,7 @@ function sl_open($db) {
 
   $con = mysqli_connect($host,$user,$pasd) or die(date('Y-m-d H:i:s')."資料庫連結失敗!!");
   mysqli_select_db($con,$db) or die(date('Y-m-d H:i:s')."無法讀取資料庫!!-sl_open()-$db");
-  mysqli_query($con,"SET NAMES Big5");
+  mysqli_query($con,"SET NAMES Big5;SET @@session.time_zone = '+08:00';");
 
   return $con;
 }
