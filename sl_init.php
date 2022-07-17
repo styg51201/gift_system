@@ -36,7 +36,8 @@ function sl_open($db) {
 
   $con = mysqli_connect($host,$user,$pasd) or die(date('Y-m-d H:i:s')."資料庫連結失敗!!");
   mysqli_select_db($con,$db) or die(date('Y-m-d H:i:s')."無法讀取資料庫!!-sl_open()-$db");
-  mysqli_query($con,"SET NAMES Big5;SET @@session.time_zone = '+08:00';");
+  mysqli_query($con,"SET NAMES Big5;");
+  mysqli_query($con,"SET @@session.time_zone = '+08:00';");
 
   return $con;
 }
