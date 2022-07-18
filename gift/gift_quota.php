@@ -164,6 +164,7 @@ function u_list(&$f_var){
         $f_var['tp']-> newBlock('tb_list_tr_max');
         $f_var['tp']-> assign('tv_base','>1');
         $f_var['tp']-> assign('tv_quota','500');
+        $f_var['tp']-> assign('tv_upd',$f_var['upd_img']);
         $main_table[ $row['config_value'] ][ '>1' ] = '500';
         $main_base_num[] = '>1';
       }
