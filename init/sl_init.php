@@ -6,7 +6,7 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 // error_reporting(E_ALL);
 header("Content-type: text/html; charset=big-5");
 date_default_timezone_set("Asia/Taipei");
-
+phpinfo();
 $q = mb_convert_encoding('¤¤¤å','big5','utf-8');
 
 $f_var['server_name']  = 'https://'.$_SERVER["SERVER_NAME"];
