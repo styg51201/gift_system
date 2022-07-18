@@ -3,16 +3,10 @@
   <link rel="stylesheet" href="gift.css" type="text/css">
   
   <style>
-    .list td.chk_btn{
-      display:none;
-    }
     .list.main_table tbody tr:hover{
       background-color: #ffe4bc;
     }
-  
   </style>
-  <script type="text/javascript" src="/~sl/jquery/jquery-3.1.0.min.js"></script>
-  <script type="text/javascript" src="/~sl/jquery/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 
   <script>
     $(document).ready(function(){
@@ -29,7 +23,7 @@
       $('.add_num').on('click',function(){
         var new_num = $.trim($('div.active input[name="base"]').val())
         var new_quota = $.trim($('div.active input[name="quota"]').val())
-        var reg = /^[1-9]+\d+$/;
+        var reg = /^[1-9]+\d*$/;
 
         if( !reg.test(new_num) || !reg.test(new_quota) ){
           alert('輸入錯誤，請填入正整數!!')
@@ -40,7 +34,7 @@
         var tr_html = '<tr>'+
                         '<td class="base_num">'+new_num+'</td>'+
                         '<td>'+new_quota+'</td>'+
-                        '<td class="del_btn pointer"><img src="/~sl/img/del.png" border="0" alt="作廢此筆" title="作廢此筆"></td>'+
+                        '<td class="del_btn pointer"><img src="../picture/作廢.png" border="0" alt="作廢此筆" title="作廢此筆"></td>'+
                       '</tr>'
         var tr
 
@@ -80,7 +74,7 @@
           max_quota_num = $('div.active tbody>tr.tr_max>td:eq(1)').text();
         }
 
-        var reg = /^[1-9]+\d+$/;
+        var reg = /^[1-9]+\d*$/;
         if( !reg.test(max_quota_num) ){
           alert('發放額度的最大值，輸入錯誤，請填入正整數!!');
           $('div.active tbody>tr.tr_max input[name="max_quota"]').focus()
@@ -129,16 +123,6 @@
         
       })
 
-      //儲存最大額度blur
-      /*$('#main_container').on('blur','div.active input[name="max_quota"]',function(e){
-        var num = $(this).val()
-        num = parseInt(num,10)
-        if( !num ) num = 1
-        $(this).parent('td').html(num)
-        $('div.active td.chk_btn').toggle()
-        $('div.active td.upd_btn').toggle()
-
-      })*/
 
     });
   </script>
@@ -231,7 +215,7 @@
               <tr>
                 <td class="base_num">{tv_base}</td>
                 <td>{tv_quota}</td>
-                <td class="pointer del_btn"><img src="/~sl/img/del.png" border="0" alt="作廢此筆" title="作廢此筆"></td>
+                <td class="pointer del_btn">{tv_del}</td>
               </tr>
             <!-- END BLOCK : tb_list_tr -->
 
@@ -239,8 +223,7 @@
               <tr class='tr_max'>
                 <td>{tv_base}</td>
                 <td>{tv_quota}</td>
-                <td class="pointer upd_btn"><img src="/~sl/img/upd.png" border="0" alt="修改此筆" title="修改此筆"></td>
-                <td class="pointer chk_btn"><img src="/~sl/img/tick.png" border="0" alt="確定儲存" title="確定儲存"></td>
+                <td class="pointer upd_btn">{tv_upd}</td>
               </tr>
             <!-- END BLOCK : tb_list_tr_max -->
             </tbody>
@@ -249,10 +232,10 @@
           <!-- START BLOCK : tb_list_add -->
             <div style="margin:30px">
               <label style="margin-right:15px">基數 : 
-                <input type="text" name="base" style="width:60px">
+                <input type="number" name="base" min='1' style="width:60px">
               </label>
               <label style="margin-right:15px">額度 : 
-                <input type="text" name="quota" style="width:60px">
+                <input type="number" name="quota" min='1' style="width:60px">
               </label>
               <button class="add_num btn btn-modify">新增</button>
             </div>

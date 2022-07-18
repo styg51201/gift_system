@@ -21,9 +21,9 @@
 //│設計日期: │2021.02.26                                                    │
 //└─────┴───────────────────────────────┘
 
-include_once('../sl_init.php'); 
+include_once('../init/sl_init.php'); 
 u_setvar($f_var);
-include_once('../sl_header.php');
+include_once('../init/sl_header.php');
 include_once("../TemplatePower/class.TemplatePower.inc.php");
 $f_var["tp"] = new  TemplatePower($f_var['tpl']);
 $f_var["tp"]-> prepare();
@@ -400,9 +400,6 @@ function u_setvar(&$f_var) {
   $f_var['mtable'] = array('head'=>'gift_head','body'=>'gift_body','type'=>'gift_type','quota'=>'gift_quota',
                           'config'=>'gift_config','guest'=>'gift_guest','item'=>'gift_item'); // 使用 table 名稱
   $f_var['tpl'] = 'gift_type.tpl'; // 樣版畫面檔
-  $f_var['dateTime'] = date('Y-m-d H:i:s'); //今天
-  $f_var['upd_img'] = '<img src="../picture/修改.png" border="0" alt="修改此筆" title="修改此筆">';
-  $f_var['del_img'] = '<img src="../picture/作廢.png" border="0" alt="作廢此筆" title="作廢此筆">';
 
 
   $f_var['s_festival']['show'] = array('中秋節','春節'); //節日選項

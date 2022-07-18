@@ -19,7 +19,7 @@
 //│設計日期: │2021.04.13                                                   │
 //└─────┴───────────────────────────────┘
 
-include_once('../sl_init.php'); 
+include_once('../init/sl_init.php'); 
 u_setvar($f_var);
 
 ?>
@@ -27,6 +27,8 @@ u_setvar($f_var);
 
 <link rel="stylesheet" href="gift.css" type="text/css">
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
 <style>
   a.box{

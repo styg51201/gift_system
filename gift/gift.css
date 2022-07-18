@@ -79,6 +79,11 @@ input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover, .bu
     font-size: 13px;
     color: #959595;
 }
+.title>.span{
+    font-size: 14px;
+    color: red;
+}
+
 .list{
     font-size:15px;
     font-family: 'Noto Sans TC', '·L³n¶®¶ÂÊ^', 'Microsoft JhengHei', sans-serif;
@@ -285,7 +290,7 @@ input:readonly{
     margin:-1px 0;
     position: relative;
     z-index: 2;    
-    padding-left: 20px;
+    padding: 0px 20px;
     flex-wrap: wrap-reverse;
 }
     .tabs>li{
@@ -329,7 +334,7 @@ input:readonly{
     .tab_content.active{display: block; }
     .tab_content .title{
         color:inherit;
-        font-size: 16px;
+        font-size: 20px;
     }
     .tab_content .row{padding-left: 35px; }
 

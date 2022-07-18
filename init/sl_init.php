@@ -1,16 +1,18 @@
-<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+
 
 <?php
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 // error_reporting(E_ALL);
 header("Content-type: text/html; charset=big-5");
 date_default_timezone_set("Asia/Taipei");
-echo date('Y-m-d H:i:s');
  
-mysql://b1f0a5048f7c99:8cf99649@us-cdbr-east-06.cleardb.net/heroku_9b5a4845768f930?reconnect=true
 
 $f_var['server_name']  = 'https://'.$_SERVER["SERVER_NAME"];
+$f_var['dateTime'] = date('Y-m-d H:i:s'); //今天
+$f_var['upd_img'] = '<img src="../picture/修改.png" border="0" alt="修改此筆" title="修改此筆">';
+$f_var['del_img'] = '<img src="../picture/作廢.png" border="0" alt="作廢此筆" title="作廢此筆">';
+$f_var['save_img'] = '<img src="../picture/儲存.png" border="0" alt="確定儲存" title="確定儲存">';
 
 
 // **************************************************************************

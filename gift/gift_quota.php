@@ -22,41 +22,36 @@
 //│設計日期: │2021.03.03                                                    │
 //└─────┴───────────────────────────────┘
 
-include_once('/home/sl/public_html/sl_init.php'); 
+include_once('../init/sl_init.php'); 
 u_setvar($f_var);
-
-include_once($mtp_url."class.TemplatePower.inc.php");
+include_once('../init/sl_header.php');
+include_once("../TemplatePower/class.TemplatePower.inc.php");
 $f_var["tp"] = new  TemplatePower($f_var['tpl']);
-$f_var["tp"]-> assignInclude ("tb_sl_tpl_1","/home/sl/public_html/sl_tpl_1.tpl");
 $f_var["tp"]-> prepare();
 
 
-include_once($sl_header_php);
-include_once('./gift_access.php'); 
+// include_once('./gift_access.php'); 
 
-if( u_chk_access($f_var) ){ //權限設定
-  sl_open($f_var['mdb']);
+$f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
 
-  switch ($f_var['msel']) {
-    case '11':
-      u_save($f_var);
-    break;
-    default:
-      u_list($f_var);
-    break;
-  }
 
-}else{
-  $f_var["tp"]-> assign("_ROOT.tv_alert",'您無權限觀看!!');
+switch ($f_var['msel']) {
+  case '11':
+    u_save($f_var);
+  break;
+  default:
+    u_list($f_var);
+  break;
 }
+
 
 
 u_link($f_var); //連結設定
 
 $f_var["tp"]-> printToScreen ();
-mysql_close(); // 關閉資料庫
+mysqli_close($f_var['con_db']); // 關閉資料庫
 
-include_once($sl_footer_php); // footer
+// include_once($sl_footer_php); // footer
 
 
 
@@ -94,16 +89,16 @@ function u_list(&$f_var){
           AND `config_key` = 'gift_quota_type'";
 
 
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $f_var['tp']-> newBlock('tb_main_table');
-    $f_var['tp']-> assign('tv_colspan',mysql_num_rows($result));
+    $f_var['tp']-> assign('tv_colspan',mysqli_num_rows($result));
 
     $i = 0;
     $main_table = array(); //總表用，儲存個各種類的資料 $main_table[運輸][基數] = 額度;
     $main_base_num = array(); //總表用，儲存所有基數
     
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $i++;
 
       //tab
@@ -136,14 +131,16 @@ function u_list(&$f_var){
                 ORDER BY order_num ASC,CONVERT(`base_num`,UNSIGNED) ASC";
       
 
-      $result_2 = mysql_query($sql_2);
-      if( mysql_num_rows($result_2) > 0 ){
-        while($row_2 = mysql_fetch_assoc($result_2)){
+      $result_2 = mysqli_query($f_var['con_db'],$sql_2);
+      if( mysqli_num_rows($result_2) > 0 ){
+        while($row_2 = mysqli_fetch_assoc($result_2)){
           $f_var['tp']-> assign('tb_list_card.tv_version',$row_2['version']);
 
           if( $row_2['base_num'] == 'MAX'){ //最大值
             $f_var['tp']-> newBlock('tb_list_tr_max');
             $f_var['tp']-> assign('tv_base','>'.$row_2['max_base']);
+            $f_var['tp']-> assign('tv_upd',$f_var['upd_img']);
+
             $main_table[ $row['config_value'] ][ '>'.$row_2['max_base'] ] = $row_2['quota'];
 
             $main_base_num[] = '>'.$row_2['max_base'];
@@ -151,6 +148,7 @@ function u_list(&$f_var){
           }else{
             $f_var['tp']-> newBlock('tb_list_tr');
             $f_var['tp']-> assign('tv_base',$row_2['base_num']);
+            $f_var['tp']-> assign('tv_del',$f_var['del_img']);
             $main_table[ $row['config_value'] ][ $row_2['base_num'] ] = $row_2['quota'];
 
             $main_base_num[] = $row_2['base_num'];
@@ -250,10 +248,10 @@ function u_save(&$f_var){
           (`type`,`version`,`base_num`,`quota`,`b_empno`,`b_dept_id`,`b_proc`,`b_date`) 
           VALUES {$str} ";
 
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
   if(!$result){
     $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!');
-    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
     return;
   }
 
@@ -268,10 +266,10 @@ function u_save(&$f_var){
                 AND `version` = '{$_POST['version']}'
                 AND `d_date` = '0000-00-00 00:00:00'";
 
-    $result_2 = mysql_query($sql_2);
+    $result_2 = mysqli_query($f_var['con_db'],$sql_2);
     if(!$result){
       $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!(舊資料無法作廢)');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
       return;
     }
   }
@@ -292,8 +290,7 @@ function u_setvar(&$f_var) {
 
   //echo $_REQUEST.'---------';
   if(is_array($_REQUEST)) { // 有資料才處理
-    while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
-      //echo "$f_fd_name=$f_fd_value----";
+    foreach($_REQUEST as $f_fd_name => $f_fd_value){
       $f_var[$f_fd_name] = $f_fd_value;
     }
   }
@@ -318,14 +315,11 @@ function u_setvar(&$f_var) {
   $f_var['ie_h_title'] = '禮品管理系統-基數&額度設定'; // 頁面標題
   $f_var['msub_title'] = '禮品管理系統-基數&額度設定'; // 程式副標題
   $f_var['mmaxline'] = 10; // 每頁最大筆數
-  $f_var['mdb'] = 'docs'; // db name
-  $f_var['mupload_dir']  = "/home/docs/public_html/gift/gift_upfile/" ; //上傳檔案到此資料夾
+  $f_var['mdb'] = 'heroku'; // db name
+  $f_var['mupload_dir']  = "./gift_upfile/" ; //上傳檔案到此資料夾
   $f_var['mtable'] = array('head'=>'gift_head','body'=>'gift_body','type'=>'gift_type','quota'=>'gift_quota',
                           'config'=>'gift_config','guest'=>'gift_guest','item'=>'gift_item'); // 使用 table 名稱
   $f_var['tpl'] = 'gift_quota.tpl'; // 樣版畫面檔
-  $f_var['dateTime'] = date('Y-m-d H:i:s'); //今天
-  $f_var['upd_img'] = '<img src="/~sl/img/upd.png" border="0" alt="修改此筆" title="修改此筆">';
-  $f_var['del_img'] = '<img src="/~sl/img/del.png" border="0" alt="作廢此筆" title="作廢此筆">';
 
 
   return;

@@ -10,20 +10,15 @@
       height:19px;
     }
   </style>
-  <script type="text/javascript" src="/~sl/jquery/jquery-3.1.0.min.js"></script>
-  <script type="text/javascript" src="/~sl/jquery/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script> 
 
-  <script type="text/javascript">
-    var j310 = jQuery.noConflict(true); //autocomplete jqª©¥»¤¬½Ä
-  </script>
-  
-  <script type="text/javascript" src="/~sl/jquery/jquery.autocomplete.js"></script>
+
+  <script type="text/javascript" src="../init/jquery.autocomplete.js"></script>
   
   <script>
     $(document).ready(function(){
 
       //tab¤Á´«
-      j310('.tabs>li').on('click', function(){
+      $('.tabs>li').on('click', function(){
         var $this = $(this),
             target = $this.attr('data-target');
         $this.addClass('active').siblings().removeClass('active');
@@ -31,12 +26,12 @@
       });
 
       //autocomplete for empno
-      j310('#main_container').on('focus','input[name="empno[]"],input[name="fina_empno"]',function(){
+      $('#main_container').on('focus','input[name="empno[]"],input[name="fina_empno"]',function(){
        autocomplete(this);
       })
 
       // blur for chk empno
-      j310('#main_container').on('blur','input[name="empno[]"],input[name="fina_empno"]',function(){
+      $('#main_container').on('blur','input[name="empno[]"],input[name="fina_empno"]',function(){
        var val = $(this).val();
        var input = this;
        var name = $(this).attr('name');
@@ -73,7 +68,7 @@
       })
 
       //update ­t³d¤H
-      j310('#main_container').on('click','.upd_btn',function(e){
+      $('#main_container').on('click','.upd_btn',function(e){
         
         var $tr = $(this).parents('tr')
         var $td_empno = $(this).parents('tr').find('td:eq(3)');
@@ -231,9 +226,7 @@
                 <td>{tv_empno}</td>
                 <td>{tv_name}</td>
                 <td align=left>{tv_address}</td>
-                <td class="upd_btn pointer">
-                  <img class="upd_img" src="/~sl/img/upd.png" border="0" alt="­×§ï¦¹µ§" title="­×§ï¦¹µ§">
-                </td>
+                <td class="upd_btn pointer">{tv_upd}</td>
               </tr>
               <!-- END BLOCK : tb_area_tr -->
             </tbody>
