@@ -268,7 +268,7 @@ jQuery.autocomplete = function(input, options) {
 			// if the field no longer has focus or if there are no matches, do not display the drop down
 			if( !hasFocus || data.length == 0 ) return hideResultsNow();
 
-			if ($.browser.msie) {
+			if (/msie/.test(navigator.userAgent.toLowerCase())) {
 				// we put a styled iframe behind the calendar so HTML SELECT elements don't show through
 				$results.append(document.createElement('iframe'));
 			}

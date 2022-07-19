@@ -54,7 +54,7 @@ switch ($f_var['msel']) {
       echo sl_jreplace($f_var['mphp_name'].".php?f_year={$_GET['f_year']}&f_festival={$_GET['f_festival']}");
     }else{
       $f_var["tp"]-> assign("_ROOT.tv_alert",'作廢失敗!!');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
     }
   break;
   default:
@@ -270,7 +270,7 @@ function u_save(&$f_var){
     // echo '新增成功..';
   }else{
     $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!');
-    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
   }
 
 }

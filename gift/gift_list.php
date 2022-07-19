@@ -26,17 +26,20 @@
 //│設計日期: │2021.03.11                                                    │
 //└─────┴───────────────────────────────┘
 
-include_once('/home/sl/public_html/sl_init.php'); 
+include_once('../init/sl_init.php'); 
 u_setvar($f_var);
-include_once($mtp_url."class.TemplatePower.inc.php");
+include_once("../TemplatePower/class.TemplatePower.inc.php");
 $f_var["tp"] = new  TemplatePower($f_var['tpl']);
-$f_var["tp"]-> assignInclude ("tb_sl_tpl_1","/home/sl/public_html/sl_tpl_1.tpl");
 $f_var["tp"]-> prepare();
+
 
 
 //----- for ajax 
 //輸入統編取得公司名
 if ($_REQUEST['ajax_get']=='ajax_get_com'){
+  echo "{$_REQUEST['q']}-{$_REQUEST['q']}";
+  exit;
+  /* 從DB取得公司名先暫停，先回傳統編
   // $q = mb_convert_encoding($_REQUEST["q"],'big5','utf-8');
   $oci = sl_openoci('PRD');
   $sql = "SELECT STCEG,SORTL FROM SAPE68.KNA1 
@@ -56,13 +59,15 @@ if ($_REQUEST['ajax_get']=='ajax_get_com'){
   }
   oci_close($oci);
   exit;
+  */
 }
 //匯入上一次客戶資料
 if ($_REQUEST['ajax_get']=='ajax_get_his_com'){
-  sl_open($f_var['mdb']);
-  $result = mysql_query("SELECT * FROM {$f_var['mtable']['head']} 
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
+  $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['head']} 
                         WHERE s_num = {$_REQUEST['s_num']}");
-  $row = mysql_fetch_assoc($result); 
+  $row = mysqli_fetch_assoc($result); 
   $where = '';
 
   //需要找上一次節日的客戶資料
@@ -86,10 +91,10 @@ if ($_REQUEST['ajax_get']=='ajax_get_his_com'){
   // echo $sql;
   // exit;
   // echo 'N';
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $data = array();
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $tax = mb_convert_encoding($row['tax_no'].'-'.$row['company'],'UTF-8','big5');
       $name = mb_convert_encoding($row['position'].'-'.$row['name'],'UTF-8','big5');
       $data[ $tax ][] = $name;
@@ -99,13 +104,14 @@ if ($_REQUEST['ajax_get']=='ajax_get_his_com'){
     $data = 'N';
   }
   echo $data;
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 
 }
 //依基數取得送禮額度
 if ($_REQUEST['ajax_get']=='ajax_get_base'){
-  sl_open($f_var['mdb']);
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
 
   $sql = "SELECT *,count(*) AS cnt FROM {$f_var['mtable']['quota']} 
           WHERE `type` = (SELECT quota_type FROM {$f_var['mtable']['head']} WHERE s_num = {$_REQUEST['s_num']}) 
@@ -113,23 +119,24 @@ if ($_REQUEST['ajax_get']=='ajax_get_base'){
           AND ( {$_REQUEST['base_num']} <= `base_num` OR `base_num` = 'MAX' )
           ORDER by CONVERT(`base_num`,UNSIGNED) ASC LIMIT 1";
 
-  $result = mysql_query($sql);
-  $row = mysql_fetch_assoc($result);
+  $result = mysqli_query($f_var['con_db'],$sql);
+  $row = mysqli_fetch_assoc($result);
   echo $row['quota'];
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 }
 //依客戶(公司)找送禮對象的歷史紀錄
 if ($_REQUEST['ajax_get']=='ajax_get_guest'){
-  sl_open($f_var['mdb']);
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
 
   $sql = "SELECT s_num,position,`name` FROM {$f_var['mtable']['guest']} 
           WHERE tax_no = {$_REQUEST['tax_no']} AND d_date = '0000-00-00 00:00:00' ";
 
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $data = array();
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $item = $row['position'].'-'.$row['name'];
       $item = mb_convert_encoding($item,'UTF-8','big5');
       $data[] = $item;
@@ -139,12 +146,13 @@ if ($_REQUEST['ajax_get']=='ajax_get_guest'){
     $data = 'N';
   }
   echo $data;
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 }
 //儲存會計審核總預算
 if ($_REQUEST['ajax_get']=='ajax_save_fina'){
-  sl_open($f_var['mdb']);
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
 
   $sql = "UPDATE {$f_var['mtable']['head']} 
           SET fina_quota_total = {$_REQUEST['fina_quota_total']},
@@ -153,18 +161,19 @@ if ($_REQUEST['ajax_get']=='ajax_save_fina'){
               fina_upd_date = now()
           WHERE s_num = {$_REQUEST['s_num']} ";
 
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
   if( $result ){
     echo 'Y';
   }else{
     echo 'N';
   }
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 }
 //檢查是否有重複的客戶(公司)
 if ($_REQUEST['ajax_get']=='ajax_chk_com'){
-  sl_open($f_var['mdb']);
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
   $tax_no = mb_convert_encoding($_REQUEST["tax_no"],'big5','utf-8');
   $tax_no = substr($tax_no,1); //去掉第一個逗號
 
@@ -178,9 +187,9 @@ if ($_REQUEST['ajax_get']=='ajax_chk_com'){
           GROUP BY tax_no";
   // echo $sql;
   // exit;
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
-    while( $row = mysql_fetch_assoc($result) ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $item = $row['tax_no'];
       $item = mb_convert_encoding($item,'UTF-8','big5');
       $data[] = $item;
@@ -190,12 +199,13 @@ if ($_REQUEST['ajax_get']=='ajax_chk_com'){
     $data = "N";
   }
   echo $data;
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 }
 //新增時檢查 年份,節日,單位 是否有重複資料
 if ($_REQUEST['ajax_get']=='ajax_chk_area'){
-  sl_open($f_var['mdb']);
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+
   $area = mb_convert_encoding($_REQUEST["area"],'big5','utf-8');
   $year = mb_convert_encoding($_REQUEST["year"],'big5','utf-8');
   $festival = mb_convert_encoding($_REQUEST["festival"],'big5','utf-8');
@@ -207,94 +217,90 @@ if ($_REQUEST['ajax_get']=='ajax_chk_area'){
           AND h.festival = '{$festival}'";
   // echo $sql;
   // exit;
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
   if( $result ){
-    echo  mysql_num_rows($result);
+    echo  mysqli_num_rows($result);
   }else{
     echo 'N';
   }
-  mysql_close(); // 關閉資料庫
+  mysqli_close($f_var['con_db']); // 關閉資料庫
   exit;
 }
 //------ end ajax
 
 
-include_once($sl_header_php);
+include_once('../init/sl_header.php');
 
-include_once('./gift_access.php'); 
+// include_once('./gift_access.php'); 
 
 
-if( u_chk_access($f_var) ){ //權限設定
-  sl_open($f_var['mdb']); // 開啟資料庫
+$f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+$f_var['admin'] = 'Y';
+switch ($f_var['msel']) {
+  case "1": // 新增-畫面
+    u_in_scr($f_var);
+    // u_upd($f_var); 
+  break;
+  case "11": // 新增-儲存
+    u_save($f_var);
+  break;
+  case "2": //修改
+    u_upd($f_var); 
+  break;
+  case "21": //修改
+    u_upd_save($f_var); 
+  break;
+  case "31": // 作廢
+    /*$sql = "UPDATE {$f_var['mtable']['head']}
+            SET `d_empno`= '{$_SESSION['login_empno']}' ,
+                `d_dept_id`= '{$_SESSION['login_dept_id']}' ,
+                `d_proc`= '{$f_var['mphp_name']}' ,
+                `d_date`= now() 
+            WHERE `s_num` = {$f_var['f_s_num']}";
+    if( mysqli_query($f_var['con_db'],$sql) ){
+      echo sl_jreplace($f_var['mphp_name'].'.php');
+    }else{
+      $f_var["tp"]-> assign("_ROOT.tv_alert",'作廢失敗!!');
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
+    }*/
+  break;
+  case "4": // 瀏覽
+    u_list($f_var);
+  break;
+  case '41': //會計審核儲存
 
-  switch ($f_var['msel']) {
-    case "1": // 新增-畫面
-      u_in_scr($f_var);
-      // u_upd($f_var); 
-    break;
-    case "11": // 新增-儲存
-      u_save($f_var);
-    break;
-    case "2": //修改
-      u_upd($f_var); 
-    break;
-    case "21": //修改
-      u_upd_save($f_var); 
-    break;
-    case "31": // 作廢
-      /*$sql = "UPDATE {$f_var['mtable']['head']}
-              SET `d_empno`= '{$_SESSION['login_empno']}' ,
-                  `d_dept_id`= '{$_SESSION['login_dept_id']}' ,
-                  `d_proc`= '{$f_var['mphp_name']}' ,
-                  `d_date`= now() 
-              WHERE `s_num` = {$f_var['f_s_num']}";
-      if( mysql_query($sql) ){
-        echo sl_jreplace($f_var['mphp_name'].'.php');
-      }else{
-        $f_var["tp"]-> assign("_ROOT.tv_alert",'作廢失敗!!');
-        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
-      }*/
-    break;
-    case "4": // 瀏覽
-      u_list($f_var);
-    break;
-    case '41': //會計審核儲存
+    foreach($_POST['s_num'] as $ind => $val){
+      $str .= ",(".trim($_POST['s_num'][$ind]).",".trim($_POST['fina_quota_total'][$ind]).")";
+    }
+    $str = substr($str,1);//去掉第一個逗號
 
-      foreach($_POST['s_num'] as $ind => $val){
-        $str .= ",(".trim($_POST['s_num'][$ind]).",".trim($_POST['fina_quota_total'][$ind]).")";
-      }
-      $str = substr($str,1);//去掉第一個逗號
-
-      // INSERT INTO ... ON DUPLICATE KEY UPDATE =>DB若有相同資料就UPD,沒有就新增(可批量),需要有唯一值去判斷
-      $sql = "INSERT INTO {$f_var['mtable']['head']} (s_num,fina_quota_total) 
-              VALUES {$str} 
-              ON DUPLICATE KEY UPDATE 
-              fina_quota_total = VALUES(fina_quota_total),
-              fina_chk = CASE fina_quota_total WHEN '0' THEN 'N' ELSE 'Y' END,
-              fina_empno = '{$_SESSION['login_empno']}',
-              fina_upd_date = now()";
-      if( mysql_query($sql) ){
-        echo sl_jreplace($f_var['mphp_name'].".php?msel=4&f_year={$_POST['year']}&f_festival={$_POST['festival']}");
-      }else{
-        $f_var["tp"]-> assign("_ROOT.tv_alert",'會計審核預算修改失敗!!');
-        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
-      }
-    break;
-    default:
-    break;
-  }
-
-}else{
-  $f_var["tp"]-> assign("_ROOT.tv_alert",'您無權限觀看!!');
+    // INSERT INTO ... ON DUPLICATE KEY UPDATE =>DB若有相同資料就UPD,沒有就新增(可批量),需要有唯一值去判斷
+    $sql = "INSERT INTO {$f_var['mtable']['head']} (s_num,fina_quota_total) 
+            VALUES {$str} 
+            ON DUPLICATE KEY UPDATE 
+            fina_quota_total = VALUES(fina_quota_total),
+            fina_chk = CASE fina_quota_total WHEN '0' THEN 'N' ELSE 'Y' END,
+            fina_empno = '{$_SESSION['login_empno']}',
+            fina_upd_date = now()";
+    if( mysqli_query($f_var['con_db'],$sql) ){
+      echo sl_jreplace($f_var['mphp_name'].".php?msel=4&f_year={$_POST['year']}&f_festival={$_POST['festival']}");
+    }else{
+      $f_var["tp"]-> assign("_ROOT.tv_alert",'會計審核預算修改失敗!!');
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
+    }
+  break;
+  default:
+  break;
 }
+
 
 
 u_link($f_var); //連結設定
 
 $f_var["tp"]-> printToScreen ();
-mysql_close(); // 關閉資料庫
+mysqli_close($f_var['con_db']); // 關閉資料庫
 
-include_once($sl_footer_php); // footer
+// include_once($sl_footer_php); // footer
 
 
 
@@ -381,11 +387,11 @@ function u_upd_save(&$f_var){
                 WHERE `s_num` = {$s_num} 
               ";
   
-        $result = mysql_query($sql);
+        $result = mysqli_query($f_var['con_db'],$sql);
         if( !$result ){
-          sl_showsql($sql);
+          // sl_showsql($sql);
           $f_var["tp"]-> assign("_ROOT.tv_alert",'禮品品項修改失敗!!');
-          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
           return;
         }
 
@@ -415,10 +421,10 @@ function u_upd_save(&$f_var){
                 `m_proc`= '{$f_var['mphp_name']}' ,
                 `m_date`= now()
             WHERE `s_num` = {$h_s_num} "; 
-    if( !mysql_query($sql) ){
-      sl_showsql($sql);
+    if( !mysqli_query($f_var['con_db'],$sql) ){
+      // sl_showsql($sql);
       $f_var["tp"]-> assign("_ROOT.tv_alert",'禮品總金額更新失敗!!');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
       return;
     }
 
@@ -441,10 +447,10 @@ function u_upd_save(&$f_var){
                     i.`d_proc`= '{$f_var['mphp_name']}' ,
                     i.`d_date`= now() 
                 WHERE b.`s_num` IN ({$del_id})";
-        if( !mysql_query($sql) ){
-          sl_showsql($sql);
+        if( !mysqli_query($f_var['con_db'],$sql) ){
+          // sl_showsql($sql);
           $f_var["tp"]-> assign("_ROOT.tv_alert",'客戶作廢失敗!!');
-          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
           return;
         }
     }
@@ -458,10 +464,10 @@ function u_upd_save(&$f_var){
                     `d_proc`= '{$f_var['mphp_name']}' ,
                     `d_date`= now() 
                 WHERE `s_num` IN ({$del_id})";
-        if( !mysql_query($sql) ){
-          sl_showsql($sql);
+        if( !mysqli_query($f_var['con_db'],$sql) ){
+          // sl_showsql($sql);
           $f_var["tp"]-> assign("_ROOT.tv_alert",'贈禮對象作廢失敗!!');
-          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+          $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
           return;
         }
     }
@@ -512,15 +518,15 @@ function u_upd_save(&$f_var){
           // echo '<pre>'.print_r($sql,1).'</pre>';
           // exit;
           
-          $result = mysql_query($sql);
+          $result = mysqli_query($f_var['con_db'],$sql);
           if( !$result ){
-            sl_showsql($sql);
+            // sl_showsql($sql);
             $f_var["tp"]-> assign("_ROOT.tv_alert",'客戶新增失敗!!');
-            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
             return;
           } 
 
-          $body_s_num = mysql_insert_id();
+          $body_s_num = mysqli_insert_id($f_var['con_db']);
     
         }else{ //修改
     
@@ -539,11 +545,11 @@ function u_upd_save(&$f_var){
                   WHERE `s_num` = {$body_s_num} AND `h_s_num` = {$h_s_num} 
                 ";
     
-          $result = mysql_query($sql);
+          $result = mysqli_query($f_var['con_db'],$sql);
           if( !$result ){
-            sl_showsql($sql);
+            // sl_showsql($sql);
             $f_var["tp"]-> assign("_ROOT.tv_alert",'客戶修改失敗!!');
-            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
             return;
           }
     
@@ -562,9 +568,9 @@ function u_upd_save(&$f_var){
                     AND position = '{$position}' 
                     AND `name` = '{$name}' AND d_date = '0000-00-00 00:00:00'";
     
-          $result = mysql_query($sql);
-          if( mysql_num_rows($result) > 0 ){ //DB內若有相同資料,存s_num,跳下一個
-            $row = mysql_fetch_assoc($result);
+          $result = mysqli_query($f_var['con_db'],$sql);
+          if( mysqli_num_rows($result) > 0 ){ //DB內若有相同資料,存s_num,跳下一個
+            $row = mysqli_fetch_assoc($result);
             $guest_id = $row['s_num'];
           }else{  //新增
 
@@ -576,14 +582,14 @@ function u_upd_save(&$f_var){
             // echo '<pre>'.print_r($sql,1).'</pre>';
             // exit;
 
-            $result = mysql_query($sql);
+            $result = mysqli_query($f_var['con_db'],$sql);
             if( !$result ){
-              sl_showsql($sql);
+              // sl_showsql($sql);
               $f_var["tp"]-> assign("_ROOT.tv_alert",'贈禮對象新增失敗!!');
-              $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+              $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
               return;
             }
-            $guest_id = mysql_insert_id();
+            $guest_id = mysqli_insert_id($f_var['con_db']);
           }
 
           if( $item_id == 0 ){ //新增
@@ -602,11 +608,11 @@ function u_upd_save(&$f_var){
                     WHERE `s_num` = {$item_id} ";
           }
 
-          $result = mysql_query($sql);
+          $result = mysqli_query($f_var['con_db'],$sql);
           if( !$result ){
-            sl_showsql($sql);
+            // sl_showsql($sql);
             $f_var["tp"]-> assign("_ROOT.tv_alert",'贈禮對象修改失敗!!');
-            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+            $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
             return;
           }
           
@@ -633,13 +639,13 @@ function u_upd_save(&$f_var){
               HAVING count(tax_no) > 1";
       // echo '<pre>'.print_r($sql,1).'</pre>';
       // exit;
-      $result = mysql_query($sql);
-      if( mysql_num_rows($result) > 0 ){
+      $result = mysqli_query($f_var['con_db'],$sql);
+      if( mysqli_num_rows($result) > 0 ){
         $title = '';
         $str = '';
         $admin_list = '';
 
-        while( $row = mysql_fetch_assoc($result) ){
+        while( $row = mysqli_fetch_assoc($result) ){
           $title = "{$row['year']}年{$row['festival']} 預計贈禮對象重複名單";
           $admin_list = explode(',',$row['admin_list']);
           $arr_snum = array_unique( explode(',',$row['s_num']) );
@@ -695,10 +701,10 @@ function u_upd_save(&$f_var){
                 `m_proc`= '{$f_var['mphp_name']}' ,
                 `m_date`= now()
             WHERE `s_num` = {$h_s_num} "; 
-    if( !mysql_query($sql) ){
-      sl_showsql($sql);
+    if( !mysqli_query($f_var['con_db'],$sql) ){
+      // sl_showsql($sql);
       $f_var["tp"]-> assign("_ROOT.tv_alert",'送禮額度總金額更新失敗!!');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
       return;
     }
 
@@ -715,17 +721,17 @@ function u_upd_save(&$f_var){
                 `m_proc`= '{$f_var['mphp_name']}' ,
                 `m_date`= now()
             WHERE s_num = {$h_s_num} ";
-    $result = mysql_query($sql);
+    $result = mysqli_query($f_var['con_db'],$sql);
     if( !$result ){
-      sl_showsql($sql);
+      // sl_showsql($sql);
       $f_var["tp"]-> assign("_ROOT.tv_alert",'地址修改失敗!!');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
       return;
     }
   }
   
 
-  echo sl_jreplace($f_var['mphp_name'].'.php?msel=2&f_s_num='.$h_s_num);
+  echo sl_jreplace("{$f_var['mphp_name']}.php?msel=2&f_s_num={$h_s_num}&f_year={$f_var['f_year']}&f_festival={$f_var['f_festival']}");
 
 }
 
@@ -741,17 +747,17 @@ function u_upd(&$f_var){
   $f_var['f_s_num'] = ReturnInt($f_var['f_s_num']);
   // $f_var["tp"]-> assign("tv_msel_name",$f_var['f_s_num']?'修改':'新增');
 
-  $sql = "SELECT h.* ,p.name AS b_name,c.config_value AS area,c.access_empno
+  $sql = "SELECT h.* ,e.name AS b_name,c.config_value AS area,c.access_empno
           FROM {$f_var['mtable']['head']} AS h
           LEFT JOIN {$f_var['mtable']['config']} AS c ON h.area_s_num = c.s_num
-          LEFT JOIN sl.pass AS p ON c.access_empno = p.empno
+          LEFT JOIN empno AS e ON c.access_empno = e.empno
           WHERE h.`s_num` = {$f_var['f_s_num']}
           ";
 
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
 
-  if( mysql_num_rows($result) > 0 ){ 
-    $h_row = mysql_fetch_assoc($result);
+  if( mysqli_num_rows($result) > 0 ){ 
+    $h_row = mysqli_fetch_assoc($result);
 
     //找出禮品品項最低的價格，給公關用
     $sql = "SELECT min(price) AS price 
@@ -759,8 +765,8 @@ function u_upd(&$f_var){
             WHERE `year` = '{$h_row['year']}'
             AND  `festival` = '{$h_row['festival']}'
             AND `d_date` = '0000-00-00 00:00:00'";
-    $result = mysql_query($sql);
-    $row = mysql_fetch_assoc($result);
+    $result = mysqli_query($f_var['con_db'],$sql);
+    $row = mysqli_fetch_assoc($result);
     if( $row['price'] == NULL ){ 
       $str = "「{$h_row['year']}年{$h_row['festival']}」的禮品品項，
                 採購部還沒建立，請等建立後再來登打規劃表，謝謝!!";
@@ -800,10 +806,10 @@ function u_upd(&$f_var){
               AND h.d_date = '0000-00-00 00:00:00' AND b.d_date = '0000-00-00 00:00:00'
               GROUP BY tax_no,company";
 
-      $result_c = mysql_query($sql_c);
-      if( mysql_num_rows($result_c) > 0 ){
+      $result_c = mysqli_query($f_var['con_db'],$sql_c);
+      if( mysqli_num_rows($result_c) > 0 ){
         $f_var['tp']-> newBlock('tb_his_com');
-        while( $row_c = mysql_fetch_assoc($result_c) ){
+        while( $row_c = mysqli_fetch_assoc($result_c) ){
           $f_var['tp']-> newBlock('tb_com_li');
           $f_var["tp"]-> assign("tv_li",$row_c['tax_no'].'-'.$row_c['company']);
         }
@@ -833,11 +839,11 @@ function u_upd(&$f_var){
       $gift_sql = "SELECT * FROM {$f_var['mtable']['type']}
                    WHERE d_date = '0000-00-00 00:00:00' 
                    AND `year` = {$h_row['year']} AND festival = '{$h_row['festival']}' ";
-      $result = mysql_query($gift_sql);
+      $result = mysqli_query($f_var['con_db'],$gift_sql);
       $gift_select = "<select name='gift_s_num[]'>";
       $gift_select .= "<option value='' data-price='0' >請選擇</option>";
-      if( mysql_num_rows($result) > 0 ){
-        while( $row = mysql_fetch_assoc($result) ){
+      if( mysqli_num_rows($result) > 0 ){
+        while( $row = mysqli_fetch_assoc($result) ){
           $gift_select .= "<option value='{$row['s_num']}' data-price='{$row['price']}'>{$row['company']}{$row['name']} {$row['price']}元</option>";
           
           $gift_array[ $row['s_num'] ] = "{$row['company']}{$row['name']} {$row['price']}元"; //一般文字用
@@ -850,7 +856,7 @@ function u_upd(&$f_var){
 
     //表頭thead
     $f_var["tp"]-> gotoBlock("tb_guest_table"); 
-    $f_var["tp"]-> assign("tv_action",$f_var['mphp_name'].'.php?msel=21');
+    $f_var["tp"]-> assign("tv_action","{$f_var['mphp_name']}.php?msel=21&f_year={$f_var['f_year']}&f_festival={$f_var['f_festival']}");
     $f_var["tp"]-> assign("tv_s_num",$h_row['s_num']);
     $f_var["tp"]-> assign("tv_year",$h_row['year']);
     $f_var["tp"]-> assign("tv_festival",$h_row['festival']);
@@ -868,10 +874,10 @@ function u_upd(&$f_var){
             WHERE h_s_num = {$h_row['s_num']} AND d_date = '0000-00-00 00:00:00'
             ORDER BY s_num ASC";
 
-    $result = mysql_query($sql);
-    if( mysql_num_rows($result) > 0 ){
+    $result = mysqli_query($f_var['con_db'],$sql);
+    if( mysqli_num_rows($result) > 0 ){
       $i = 0;
-      while( $row = mysql_fetch_assoc($result) ){
+      while( $row = mysqli_fetch_assoc($result) ){
 
         $i++;
         $f_var['tp']-> newBlock('tb_guest_tr');
@@ -909,9 +915,9 @@ function u_upd(&$f_var){
         $sql_2 = "SELECT i.*,g.position,g.name FROM {$f_var['mtable']['item']} AS i
                   LEFT JOIN {$f_var['mtable']['guest']} AS g ON i.guest_s_num = g.s_num
                   WHERE i.b_s_num = {$row['s_num']} AND i.d_date = '0000-00-00 00:00:00'";
-        $result_2 = mysql_query($sql_2);
-        if( mysql_num_rows($result_2) > 0 ){
-          while( $row_2 = mysql_fetch_assoc($result_2) ){
+        $result_2 = mysqli_query($f_var['con_db'],$sql_2);
+        if( mysqli_num_rows($result_2) > 0 ){
+          while( $row_2 = mysqli_fetch_assoc($result_2) ){
 
             $f_var['tp']-> newBlock('tb_guest_div');
             $f_var["tp"]-> assign("tv_item_id",$row_2['s_num']);
@@ -1026,38 +1032,39 @@ function u_list(&$f_var){
     $sql_where = '';
   }
   
-  $sql = "SELECT h.*,c.config_value AS area,p.name AS b_name
+  $sql = "SELECT h.*,c.config_value AS area,e.name AS b_name
           FROM {$f_var['mtable']['head']} AS h
           LEFT JOIN {$f_var['mtable']['config']} AS c ON h.area_s_num = c.s_num
-          LEFT JOIN sl.pass AS p ON h.b_empno = p.empno
+          LEFT JOIN empno AS e ON h.b_empno = e.empno
           WHERE h.`d_date` = '0000-00-00 00:00:00'
           AND h.`year` = '{$f_var['f_year']}'
           AND h.`festival` = '{$f_var['f_festival']}'
           {$sql_where}";
 
 
-  $qty_cnt = mysql_num_rows( mysql_query($sql) ) ;
+  $qty_cnt = mysqli_num_rows( mysqli_query($f_var['con_db'],$sql) ) ;
   if( $qty_cnt > 0 ){
     $f_var['max_page'] = floor(((($f_var['mmaxline']-1)+$qty_cnt)/$f_var['mmaxline'])); // 求整數，最大頁次
   }
 
   $sql .= $limit_sql;
-  sl_showsql($sql);
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  // sl_showsql($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $i = 0;
     $fina = false;
+
     if( $f_var['admin'] == 'Y' || $f_var['fina'] == 'Y' ){ //會計審核用
       $f_var['tp']-> newBlock('tb_fina_btn');
       $f_var['tp']-> newBlock('tb_fina_set');
-      $f_var['tp']-> assign('tv_action',$f_var['mphp_name'].'.php?msel=41');
+      $f_var['tp']-> assign('tv_action',"{$f_var['mphp_name']}.php?msel=41&f_year={$f_var['f_year']}&f_festival={$f_var['f_festival']}");
       $f_var['tp']-> assign('tv_year',$f_var['f_year']);
       $f_var['tp']-> assign('tv_festival',$f_var['f_festival']);
     }
 
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $i++;
-      $href = "{$f_var['mphp_name']}.php?msel=2&f_s_num={$row['s_num']}";
+      $href = "{$f_var['mphp_name']}.php?msel=2&f_s_num={$row['s_num']}&f_year={$f_var['f_year']}&f_festival={$f_var['f_festival']}";
       $f_var['tp']-> newBlock('tb_list_tr');
       $f_var['tp']-> assign('tv_i',$i);
       $span = '<span class="red"> (尚未登打完成)</span>';
@@ -1117,9 +1124,9 @@ function u_list(&$f_var){
       // echo '<pre>'.print_r($sql,1).'</pre>';
       // exit;
       $count_tax = 0;
-      $result = mysql_query($sql);
-      if( mysql_num_rows($result) > 0 ){
-        while( $row = mysql_fetch_assoc($result) ){
+      $result = mysqli_query($f_var['con_db'],$sql);
+      if( mysqli_num_rows($result) > 0 ){
+        while( $row = mysqli_fetch_assoc($result) ){
           //依統編跟單位 找出贈禮對象
           $sql_item = "SELECT c.config_value AS area,b.h_s_num,b.company,g.position,g.name 
                       FROM {$f_var['mtable']['body']} AS b
@@ -1137,10 +1144,10 @@ function u_list(&$f_var){
           // echo '<pre>'.print_r($sql_item,1).'</pre>';
           // exit;
     
-          $result_item = mysql_query($sql_item);
+          $result_item = mysqli_query($f_var['con_db'],$sql_item);
           $list = array(); //放資料用
           $count = array(); //計算出現次數 rowspan用
-          while( $row_item = mysql_fetch_assoc($result_item) ){
+          while( $row_item = mysqli_fetch_assoc($result_item) ){
             $list[ $row_item['area'] ][ $row_item['company'] ][] = $row_item;
             $count[ $row_item['area'] ]['num']++;
             $count[ $row_item['area'] ][ $row_item['company'] ]++;
@@ -1159,7 +1166,7 @@ function u_list(&$f_var){
                 $td = '';
     
                 if( $i == 0 && $k == 0 && $ind == 0 ){ //最第一個 會有tax_no的
-                  $td .= "<td name='tax_no' rowspan=".mysql_num_rows($result_item).">{$row['tax_no']}</td>";
+                  $td .= "<td name='tax_no' rowspan=".mysqli_num_rows($result_item).">{$row['tax_no']}</td>";
                 }
                 if( $ind == 0 ){  //公司裡贈禮對象的第一個 會有公司名稱
                   $td .= "<td rowspan=".$count[$area][$company].">{$company}</td>";
@@ -1206,7 +1213,7 @@ function u_save(&$f_var){
 
 
   $_POST['s_num'] = ReturnInt($_POST['s_num']);
-  $result = mysql_query("SELECT * FROM {$f_var['mtable']['head']} WHERE s_num = {$_POST['s_num']}");
+  $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['head']} WHERE s_num = {$_POST['s_num']}");
 
 
   $base_rev = "SELECT config_value FROM {$f_var['mtable']['config']} 
@@ -1227,7 +1234,7 @@ function u_save(&$f_var){
 
   
   
-  if( mysql_num_rows($result) > 0 ){ //update
+  if( mysqli_num_rows($result) > 0 ){ //update
 
     $sql = "UPDATE {$f_var['mtable']['head']}
             SET `year` = '{$_POST["year"]}' ,
@@ -1261,7 +1268,7 @@ function u_save(&$f_var){
     $ins_key .= ',`quota_type`'     ;  $ins_val .= ",($quota_type)";
     $ins_key .= ',`quota_version`'  ;  $ins_val .= ",($quota_version)";
 
-    $ins_key .= ',`b_empno`'        ;  $ins_val .= ",{$_SESSION['login_empno']}";
+    $ins_key .= ',`b_empno`'        ;  $ins_val .= ",'{$_SESSION['login_empno']}'";
     $ins_key .= ',`b_dept_id`'      ;  $ins_val .= ",'{$_SESSION['login_dept_id']}'";
     $ins_key .= ',`b_proc`'         ;  $ins_val .= ",'{$f_var['mphp_name']}'";
     $ins_key .= ',`b_date`'         ;  $ins_val .= ",now()";
@@ -1273,16 +1280,16 @@ function u_save(&$f_var){
 
   }
 
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
   // sl_showsql($sql);
 
 
   if( $result ){
-    echo sl_jreplace($f_var['mphp_name'].'.php?msel=2&f_s_num='.mysql_insert_id() );
+    echo sl_jreplace($f_var['mphp_name'].'.php?msel=2&f_s_num='.mysqli_insert_id($f_var['con_db']) );
     // echo '新增成功..';
   }else{
     $f_var["tp"]-> assign("_ROOT.tv_alert",'規劃表新增失敗!!');
-    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysql_error());
+    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
     return false;
   }
 
@@ -1309,15 +1316,15 @@ function u_in_scr(&$f_var) {
     $sql_access = " AND access_empno = '{$_SESSION['login_empno']}' "; //限定窗口人
   }
 
-  $result = mysql_query("SELECT * FROM {$f_var['mtable']['config']} 
+  $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']} 
                         WHERE config_key = 'gift_head_area' 
                         {$sql_access} ");
 
-  $f_var['fd']['area_s_num']['show'][] = '請選擇';
+  $f_var['fd']['area_s_num']['show'][] = "請選擇";
   $f_var['fd']['area_s_num']['value'][] = '';
   $f_var['fd']['area_s_num']['data-address'][] = '';
 
-  while($row = mysql_fetch_assoc($result)){
+  while($row = mysqli_fetch_assoc($result)){
     $f_var['fd']['area_s_num']['show'][] = $row['config_value'];
     $f_var['fd']['area_s_num']['value'][] = $row['s_num'];
     $f_var['fd']['area_s_num']['data-address'][] = $row['address'];
@@ -1336,15 +1343,16 @@ function u_in_scr(&$f_var) {
           WHERE s_num = {$f_var['f_s_num']}
           AND d_date = '0000-00-00 00:00:00'";
 
-  sl_showsql($sql);
+  // sl_showsql($sql);
 
   $row = array();
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
-    $row = mysql_fetch_assoc($result);
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
+    $row = mysqli_fetch_assoc($result);
   }
 
-  while( list($key,$val) = each($f_var['fd']) ){
+
+  foreach($f_var['fd'] as $key => $val){
 
     $f_var["tp"]-> newBlock('tb_ins_tr');
     $f_var["tp"]-> assign("tv_cname",$val['cname']);
@@ -1355,7 +1363,6 @@ function u_in_scr(&$f_var) {
     if( $val['pkey'] == 'Y' ){
       $f_var["tp"]-> assign("tv_pkey","<span class='red'>*</span>");
     }
-
 
     $f_var["tp"]-> newBlock('tb_ins_'.$val['type']);
 
@@ -1402,8 +1409,7 @@ function u_setvar(&$f_var) {
 
   //echo $_REQUEST.'---------';
   if(is_array($_REQUEST)) { // 有資料才處理
-    while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
-      //echo "$f_fd_name=$f_fd_value----";
+    foreach($_REQUEST as $f_fd_name => $f_fd_value){
       $f_var[$f_fd_name] = $f_fd_value;
     }
   }
@@ -1437,14 +1443,13 @@ function u_setvar(&$f_var) {
   $f_var['ie_h_title'] = '禮品管理系統-贈禮對象規劃表'; // 頁面標題
   $f_var['msub_title'] = '禮品管理系統-贈禮對象規劃表'; // 程式副標題
   $f_var['mmaxline'] = 15; // 每頁最大筆數
-  $f_var['mdb'] = 'docs'; // db name
-  $f_var['mupload_dir']  = "/home/docs/public_html/gift/gift_upfile/" ; //上傳檔案到此資料夾
+  $f_var['mdb'] = 'heroku'; // db name
+  $f_var['mupload_dir']  = "./gift_upfile/" ; //上傳檔案到此資料夾
   $f_var['mtable'] = array('head'=>'gift_head','body'=>'gift_body','type'=>'gift_type','quota'=>'gift_quota',
                           'config'=>'gift_config','guest'=>'gift_guest','item'=>'gift_item'); // 使用 table 名稱 
   $f_var['tpl'] = 'gift_list.tpl'; // 樣版畫面檔
 
-  $f_var['upd_img'] = '<img class="pointer" src="/~sl/img/upd.png" border="0" alt="修改此筆" title="修改此筆">';
-  $f_var['del_img'] = '<img class="pointer" src="/~sl/img/del.png" border="0" alt="作廢此筆" title="作廢此筆">';
+
 
 
   $f_var['s_festival']['show'] = array('中秋節','春節'); //節日選項
@@ -1472,9 +1477,9 @@ function u_setvar(&$f_var) {
       'area_s_num'  =>  array('ename'     => 'area_s_num',
                               'cname'     => '單位',
                               'type'      => 'select',
-                              'value'     => '',
-                              'show'      => '',
-                              'data-address' => '',
+                              'value'     => [],
+                              'show'      => [],
+                              'data-address' => [],
                               'pkey'      => 'Y',
                               'memo'      => '',),
   

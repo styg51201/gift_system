@@ -252,7 +252,7 @@ function u_save(&$f_var){
   $result = mysqli_query($f_var['con_db'],$sql);
   if(!$result){
     $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!');
-    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+    $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
     return;
   }
 
@@ -270,7 +270,7 @@ function u_save(&$f_var){
     $result_2 = mysqli_query($f_var['con_db'],$sql_2);
     if(!$result){
       $f_var["tp"]-> assign("_ROOT.tv_alert",'儲存失敗!!(舊資料無法作廢)');
-      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+      $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
       return;
     }
   }

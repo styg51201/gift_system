@@ -194,7 +194,7 @@ function u_save(&$f_var){
       if( !mysqli_query($f_var['con_db'],$sql) ){
         sl_showsql($sql);
         $f_var["tp"]-> assign("_ROOT.tv_alert",'修改失敗!!');
-        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
         return;
       }
 
@@ -240,7 +240,7 @@ function u_save(&$f_var){
       if( !$result ){
         sl_showsql($sql);
         $f_var["tp"]-> assign("_ROOT.tv_alert",'修改失敗!!');
-        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error());
+        $f_var["tp"]-> assign("_ROOT.tv_sql_error",mysqli_error($f_var['con_db']));
         return;
       }
   

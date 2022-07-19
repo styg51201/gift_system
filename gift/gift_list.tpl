@@ -10,11 +10,6 @@
       background-color:#ff5722;
       border:none;
     }
-    img.icon{
-      width:11px;
-      height:11px;
-      padding:0 5px;
-    }
     .his{
       display:none;
       position:absolute;
@@ -54,7 +49,7 @@
       top:50%;
       left:50%;
       transform: translate(-50%, -50%);
-      padding:20px;
+      padding:30px;
       background-color: #ffffff;
       border:1px solid #616161;
       border-radius:10px;
@@ -62,10 +57,10 @@
     }
     .set .close_box{
       position: absolute;
-      right: 27.5%;
-      top: 5%;
+      right: 0%;
+      top: 0%;
       z-index: 5;
-      width: 35px;
+      width: 40px;
     }
     .fina_table thead th,
     #repeat_table thead th{
@@ -143,6 +138,15 @@
       width:48%
     }
 
+    td[name=guest] img{
+      width:25px;
+    }
+
+    td[name=company] img{
+      width:20px;
+    }
+
+
 
   </style>
   <!-- <script type="text/javascript" src="/~sl/jquery/jquery.autocomplete.js"></script>  -->
@@ -153,7 +157,7 @@
     $(document).ready(function(){
 
       //會計審核預算用-編輯畫面裡的單一按鈕
-      j183('.guest_table').on('click','.upd_fina',function(){
+      $('.guest_table').on('click','.upd_fina',function(){
 
         var btn = this;
         var $th = $(btn).parent('th').prev('th[name="fina_quota_total"]');
@@ -420,17 +424,17 @@
             if( $('#his_com').hasClass('active') && !$(elem).is('.his_com_btn') ){
               if( !$(elem).is('#his_com') && $(elem).parents('#his_com').length == 0 ){
                 $('#his_com.active').toggleClass('active');
-                j183('#his_com').off('.set');
+                $('#his_com').off('.set');
               }
             }
             //送禮對象歷史紀錄
             if( $('#his_guest').hasClass('active') &&  $(document.activeElement).attr('name') != 'position[]' ){
               if( !$(elem).is('#his_guest') && $(elem).parents('#his_guest').length == 0 ){
                 $('#his_guest.active').toggleClass('active');
-                j183('#his_guest').off('.set');
+                $('#his_guest').off('.set');
               }
             }else if( !$('#his_guest').hasClass('active') && $(document.activeElement).attr('name') == 'position[]' ){
-              j183(document.activeElement).focus();
+              $(document.activeElement).focus();
             }
           
 
@@ -438,12 +442,12 @@
           })
 
           //autocomplete for 統編
-          j183('.guest_table').on('focus','input[name="tax_no[]"]',function(event){
+          $('.guest_table').on('focus','input[name="tax_no[]"]',function(event){
             autocomplete(this);
           })
 
           // blur for chk 統編
-          j183('.guest_table').on('blur','input[name="tax_no[]"]',function(){
+          $('.guest_table').on('blur','input[name="tax_no[]"]',function(){
       
             var input = this;
             var val = $(this).val();
@@ -512,9 +516,9 @@
               $.each(item,function(ind,val){
                 val = val.split('-');
                 if( ind == 0 ){
-                  img = '<img class="add_guest pointer" src="/~sl/img/plus.png" title="新增對象">';
+                  img = '<img class="add_guest pointer" src="../picture/加號.png" title="新增對象">';
                 }else{
-                  img = '<img class="del_guest pointer" src="/~sl/img/minus.png" title="刪除">';
+                  img = '<img class="del_guest pointer" src="../picture/減號.png" title="刪除">';
                 }
                 div += '<div data-item_id="0">'+
                       '<input type="hidden" name="item_id[]" value="0">'+
@@ -532,7 +536,7 @@
                       '<td name="company" data-tax_no="'+tax[0]+'">'+
                         '<input type="text" name="tax_no[]" placeholder="輸入統編" maxlength="8" size="8" value="'+tax[0]+'">'+
                         '<input type="text" name="company[]" value="'+tax[1]+'" readonly placeholder="公司名稱自動帶出">'+
-                          '<img class="icon pointer his_com_btn" src="/~sl/img/arrow-down.svg" title="歷史紀錄選單">'+
+                          '<img class="icon pointer his_com_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+
                       '</td>'+
                       '<td colspan="2" name="guest">'+div+'</td>'+
                       '<td name="avg_rev"><input type="text" name="avg_rev[]" size="10"></td>'+
@@ -564,7 +568,7 @@
                         '<td name="company">'+
                           '<input type="text" name="tax_no[]" placeholder="輸入統編" maxlength="8" size="8">'+
                           '<input type="text" name="company[]" readonly placeholder="公司名稱自動帶出">'+
-                          '<img class="icon pointer his_com_btn" src="/~sl/img/arrow-down.svg" title="歷史紀錄選單">'+
+                          '<img class="icon pointer his_com_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+
                           '<p class="memo">(若非簽約公司，統編請輸入N，自行登打公司名稱)</p>'+
                         '</td>'+
                         '<td colspan="2" name="guest">'+
@@ -572,8 +576,8 @@
                             '<input type="hidden" name="item_id[]" value="0">'+
                             '<input type="text" name="position[]" size="10">'+
                             '<input type="text" name="name[]" size="10">'+
-                            /*'<img class="icon pointer his_guest_btn" src="/~sl/img/arrow-down.svg" title="歷史紀錄選單">'+*/
-                            '<img class="add_guest pointer" src="/~sl/img/plus.png" title="新增對象">'+
+                            /*'<img class="icon pointer his_guest_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+*/
+                            '<img class="add_guest pointer" src="../picture/加號.png" title="新增對象">'+
                         '</div></td>'+
                         '<td name="avg_rev"><input type="text" name="avg_rev[]" size="10"></td>'+
                         '<td name="avg_gp"><input type="text" name="avg_gp[]" size="10"></td>'+
@@ -587,7 +591,7 @@
           })
 
           //修改客戶(公司)
-          j183('.guest_table').on('click','.upd_company>img',function(){
+          $('.guest_table').on('click','.upd_company>img',function(){
 
             if( $(this).hasClass('active') ) return;
             $(this).addClass('active');
@@ -607,7 +611,7 @@
             var str_body_id = '<input type="hidden" name="body_id[]" value="'+$body_id.attr('data-body_id')+'">',
                 str_company = '<input type="text" name="tax_no[]" value="'+$company.attr('data-tax_no')+'" placeholder="輸入統編" maxlength="8" size="8">'+
                               '<input type="text" name="company[]" value="'+$company.text()+'" '+readonly+' placeholder="公司名稱自動帶出">'+
-                              '<img class="icon pointer his_com_btn" src="/~sl/img/arrow-down.svg" title="歷史紀錄選單">',
+                              '<img class="icon pointer his_com_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">',
                 str_avg_rev = '<input type="text" name="avg_rev[]" value="'+$avg_rev.text()+'" size="10">',
                 str_avg_gp = '<input type="text" name="avg_gp[]" value="'+$avg_gp.text()+'" size="10">',
                 str_avg_gpm = '<input type="text" name="avg_gpm[]" value="'+$avg_gpm.children('span').text()+'" size="10" readonly placeholder="自動帶出"> %',
@@ -626,9 +630,9 @@
             $guest.find('div').each(function(ind,ele){
               var img;
               if( ind == 0){
-                img = '<img class="add_guest pointer" src="/~sl/img/plus.png" title="新增對象">';
+                img = '<img class="add_guest pointer" src="../picture/加號.png" title="新增對象">';
               }else{
-                img = '<img class="del_guest pointer save_id" src="/~sl/img/minus.png" title="刪除">';
+                img = '<img class="del_guest pointer save_id" src="../picture/減號.png" title="刪除">';
               }
               var item_id = $(ele).attr('data-item_id')
               var position = $(ele).children('span').eq(0).text();
@@ -644,7 +648,7 @@
           })
 
           //刪除客戶(公司)
-          j183('.guest_table').on('click','.del_com>img,button.del_com',function(){
+          $('.guest_table').on('click','.del_com>img,button.del_com',function(){
 
             var id = $(this).parents('tr').find('td[name="body_id"]').attr('data-body_id')
             if( id != 0 ){ //s_num存起來,送到後端作廢,等於0的話是新增(還沒進DB的)
@@ -663,19 +667,19 @@
           })
 
           //新增送禮對象
-          j183('.guest_table').on('click','.add_guest',function(){
+          $('.guest_table').on('click','.add_guest',function(){
             var div = '<div data-item_id="0">'+
                         '<input type="hidden" name="item_id[]" value="0">'+
                         '<input type="text" name="position[]" size="10">'+
                         '<input type="text" name="name[]" size="10">'+
-                        /*'<img class="icon pointer his_guest_btn" src="/~sl/img/arrow-down.svg" title="歷史紀錄選單">'+*/
-                        '<img class="del_guest pointer" src="/~sl/img/minus.png" title="刪除">'+
+                        /*'<img class="icon pointer his_guest_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+*/
+                        '<img class="del_guest pointer" src="../picture/減號.png" title="刪除">'+
                       '</div>';
             $(this).parents('td').append(div)
           })
 
           //刪除送禮對象
-          j183('.guest_table').on('click','.del_guest',function(){
+          $('.guest_table').on('click','.del_guest',function(){
 
             var id = $(this).parent('div').attr('data-item_id');
             if( id != 0 ){ //s_num存起來,送到後端作廢,等於0的話是新增(還沒進DB的)
@@ -687,7 +691,7 @@
           })
 
           //客戶(公司)歷史紀錄
-          j183('.guest_table').on('click','.his_com_btn',function(){
+          $('.guest_table').on('click','.his_com_btn',function(){
 
             var $tax_input = $(this).siblings('input[name="tax_no[]"]');
             var $com_input = $(this).siblings('input[name="company[]"]');
@@ -715,11 +719,11 @@
           })
 
           //職稱,姓名 歷史紀錄
-          j183('.guest_table').on('focus','input[name="position[]"]',function(){
+          $('.guest_table').on('focus','input[name="position[]"]',function(){
 
             if( $('#his_guest').hasClass('active') ){
               $('#his_guest').toggleClass('active');
-              j183('#his_guest').off('.set');
+              $('#his_guest').off('.set');
               return;
             }
 
@@ -775,22 +779,22 @@
           })
 
           //職稱,姓名 歷史紀錄 keyin時 關閉視窗
-          j183('.guest_table').on('input','input[name="position[]"]',function(){
+          $('.guest_table').on('input','input[name="position[]"]',function(){
 
             if( $('#his_guest').hasClass('active') && $(this).val() != '' ){ //有歷史視窗
 
               $('#his_guest.active').toggleClass('active')
-              j183('#his_guest').off('.set');
+              $('#his_guest').off('.set');
 
             }else if( !$('#his_guest').hasClass('active') &&  $(this).val() == '' ){
-              j183(this).focus();
+              $(this).focus();
 
             }
 
           })
 
           //算出毛利率、基數、送禮額度
-          j183('.guest_table').on('blur','input[name="avg_rev[]"],input[name="avg_gp[]"]',function(){
+          $('.guest_table').on('blur','input[name="avg_rev[]"],input[name="avg_gp[]"]',function(){
 
             var s_num = $('input[name="s_num"]').val();
             var avg_rev = $(this).parents('tr').find('input[name="avg_rev[]"]').val();
@@ -860,7 +864,7 @@
               if( $(ele).val() == '' ){
                 bool = true;
                 alert('請勿留空白!');
-                j183(ele).focus();
+                $(ele).focus();
                 return false; //跳出迴圈
               }
             })
@@ -978,16 +982,16 @@
 
           /*if( $(id).hasClass('active') ){
             $(id).toggleClass('active');
-            j183(id).off('.set');
+            $(id).off('.set');
             return;
           }*/
 
           $(id).toggleClass('active');
 
-          j183(id).on('click.set','li',function(){
+          $(id).on('click.set','li',function(){
             select_fun(this)
             $(id).toggleClass('active');
-            j183(id).off('.set');
+            $(id).off('.set');
           })
 
         }
@@ -1062,19 +1066,19 @@
         $(document).ready(function(){
           
           //禮品變更時，算出禮品單價、總金額
-          j183('.guest_table').on('change','select[name="gift_s_num[]"]',function(){
+          $('.guest_table').on('change','select[name="gift_s_num[]"]',function(){
 
             var $tr = $(this).parents('tr');
             var ind = $tr.find('select[name="gift_s_num[]"]').index($(this))
             var $op = $(this).find('option:selected');
             $tr.find('input[name="gift_price[]"]').eq(ind).val( $op.attr('data-price') );
 
-            j183($tr).find('input[name="gift_cnt[]"]').eq(ind).trigger('change'); //觸發事件 => 算總金額
+            $($tr).find('input[name="gift_cnt[]"]').eq(ind).trigger('change'); //觸發事件 => 算總金額
 
           })
 
           //禮品數量時，算出總金額
-          j183('.guest_table').on('change','input[name="gift_cnt[]"]',function(){
+          $('.guest_table').on('change','input[name="gift_cnt[]"]',function(){
 
             var cnt = $(this).val();
             var reg = /^\d+$/;
@@ -1106,7 +1110,7 @@
           })
 
           //登打完畢,confirm
-          j183('.guest_table').on('click','#all_done',function(){
+          $('.guest_table').on('click','#all_done',function(){
 
             if( confirm('送出後，不可再做任何修改，是否繼續送出？') ){
 
@@ -1126,7 +1130,7 @@
               if( $(ele).val() == '' ){
                 bool = true;
                 alert('請選擇禮品!!');
-                j183(ele).focus();
+                $(ele).focus();
                 return false; //跳出迴圈
               }
             })
@@ -1137,7 +1141,7 @@
               if( $(ele).val() == '0' ){
                 bool = true;
                 alert('請填入正確的數量!!');
-                j183(ele).focus();
+                $(ele).focus();
                 return false; //跳出迴圈
               }
             })
@@ -1186,7 +1190,7 @@
             <div>
               地址 : <span>{tv_address}</span>
               <!-- START BLOCK : tb_upd_address -->
-                <img id="upd_address" class="pointer" src="/~sl/img/upd.png" alt="修改地址" title="修改地址">
+                <img id="upd_address" class="pointer" src="../picture/修改.png" alt="修改地址" title="修改地址">
               <!-- END BLOCK : tb_upd_address -->
             </div>
             <div>
@@ -1426,7 +1430,6 @@
           return false;
         }
 
-
       })
 
     });
@@ -1598,8 +1601,8 @@
   <!-- START BLOCK : tb_fina_set -->
   <div class="set fina_set">
     <div>
-      <img class="pointer close_box" src="/~sl/img/sign-error-32.png" alt="關閉視窗" title="關閉視窗">
       <div class="box">
+        <img class="pointer close_box" src="../picture/關閉.png" alt="關閉視窗" title="關閉視窗">
         <form action="{tv_action}" method="POST" name="fina_form"> 
           <input type="hidden" name="year" value="{tv_year}">
           <input type="hidden" name="festival" value="{tv_festival}">
@@ -1643,8 +1646,8 @@
   <!-- START BLOCK : tb_repeat -->
   <div class="set repeat_set">
     <div>
-      <img class="pointer close_box" src="/~sl/img/sign-error-32.png" alt="關閉視窗" title="關閉視窗">
       <div class="box">
+        <img class="pointer close_box" src="../picture/關閉.png" alt="關閉視窗" title="關閉視窗">
         <table class="list" id="repeat_table" width="100%">
           <caption>{tv_year}年{tv_festival}預計贈禮對象重複名單</caption>
           <thead class="border">
