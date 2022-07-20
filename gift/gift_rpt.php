@@ -26,8 +26,11 @@
 //│設計日期: │2021.04.01                                                   │
 //└─────┴───────────────────────────────┘
 
-include_once('/home/sl/public_html/sl_init.php'); 
+include_once('../init/sl_init.php'); 
 u_setvar($f_var);
+include_once("../TemplatePower/class.TemplatePower.inc.php");
+$f_var["tp"] = new  TemplatePower($f_var['tpl']);
+$f_var["tp"]-> prepare();
 
 // ------- for excel -------
 if($f_var['excel'] == 'Y' ){ //必須在tpl前面,因為tpl會傳送header
@@ -41,34 +44,27 @@ if($f_var['excel'] == 'Y' ){ //必須在tpl前面,因為tpl會傳送header
 }
 // ------- end excel -------
 
-include_once($mtp_url."class.TemplatePower.inc.php");
-$f_var["tp"] = new  TemplatePower($f_var['tpl']);
-$f_var["tp"]-> assignInclude ("tb_sl_tpl_1","/home/sl/public_html/sl_tpl_1.tpl");
-$f_var["tp"]-> prepare();
+
+include_once('../init/sl_header.php');
+// include_once('./gift_access.php'); 
 
 
-include_once($sl_header_php);
-include_once('./gift_access.php'); 
-
-if( u_chk_access($f_var) ){ //權限設定
-
-  sl_open($f_var['mdb']); // 開啟資料庫
-  switch ($f_var['msel']) {
-    default:
-      u_input($f_var);
-    break;
-  }
-
-}else{
-  $f_var["tp"]-> assign("_ROOT.tv_alert",'您無權限觀看!!');
+$f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
+$f_var["admin"] = 'Y';
+switch ($f_var['msel']) {
+  default:
+    u_input($f_var);
+  break;
 }
+
+
 
 u_link($f_var); //連結設定
 
 $f_var["tp"]-> printToScreen ();
-mysql_close(); // 關閉資料庫
+mysqli_close($f_var['con_db']); // 關閉資料庫
 
-include_once($sl_footer_php); // footer
+// include_once($sl_footer_php); // footer
 
 
 // **************************************************************************
@@ -94,9 +90,9 @@ function u_link(&$f_var){
 // **************************************************************************
 function repeat_excel(&$f_var){
 
-  include '/home/sl/public_html/PHPExcelv2/PHPExcel.php';
+  include '../PHPExcelv2/PHPExcel.php';
 
-  sl_open($f_var['mdb']); // 開啟資料庫
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
 
   //找出重複的統編跟單位
   $sql = "SELECT tax_no,GROUP_CONCAT(h.s_num) AS h_s_num
@@ -114,9 +110,9 @@ function repeat_excel(&$f_var){
 
   // echo '<pre>'.print_r($sql,1).'</pre>';
   // exit;
-  $result = mysql_query($sql);
+  $result = mysqli_query($f_var['con_db'],$sql);
   $row_num = 0;
-  if( mysql_num_rows($result) > 0 ){
+  if( mysqli_num_rows($result) > 0 ){
     //建立excel
     $objPHPExcel = new PHPExcel();
     $sheet = $objPHPExcel->getActiveSheet();
@@ -144,7 +140,7 @@ function repeat_excel(&$f_var){
     $col = 'E'; //最長第E行
     $num = 4; //第4列開始
 
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       
       //依統編跟單位 找出贈禮對象
       $sql_item = "SELECT c.config_value AS area,b.h_s_num,b.company,g.position,g.name 
@@ -162,11 +158,11 @@ function repeat_excel(&$f_var){
       // echo '<pre>'.print_r($sql_item,1).'</pre>';
       // exit;
 
-      $result_item = mysql_query($sql_item);
+      $result_item = mysqli_query($f_var['con_db'],$sql_item);
       $list_area = array();
       $list_com = array();
       $i = 0;
-      while( $row_item = mysql_fetch_assoc($result_item) ){
+      while( $row_item = mysqli_fetch_assoc($result_item) ){
 
         //合併單元格用-- 把相同單位 以及 相同單位又相同公司名 的列的數字儲存起來
         $list_area[ $row_item['area'] ][] = $i+$num;
@@ -263,7 +259,7 @@ function repeat_excel(&$f_var){
 
     // 傳送下載的檔頭
     header('Content-Type: application/vnd.ms-excel');  
-    header("Content-Disposition: attachment;filename={$filename}.xls");  
+    header("Content-Disposition: attachment;filename={$filename}.xlsx");  
     header('Cache-Control: max-age=0');  
 
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007'); 
@@ -283,10 +279,10 @@ function repeat_excel(&$f_var){
 // **************************************************************************
 function u_excel(&$f_var){
 
-  include '/home/sl/public_html/PHPExcelv2/PHPExcel.php';
+  include '../PHPExcelv2/PHPExcel.php';
   $objPHPExcel = new PHPExcel();
 
-  sl_open($f_var['mdb']); // 開啟資料庫
+  $f_var['con_db'] = sl_open($f_var['mdb']); // 開啟資料庫
 
   if($_POST['area_s_num'] == 'all'){
     $area = '';
@@ -294,20 +290,20 @@ function u_excel(&$f_var){
     $area = "AND h.area_s_num = {$_POST['area_s_num']}";
   }
 
-  $area_sql = "SELECT h.*,c.config_value AS area ,e.e09_2 AS `b_name` FROM {$f_var['mtable']['head']} AS h
+  $area_sql = "SELECT h.*,c.config_value AS area ,e.name AS `b_name` FROM {$f_var['mtable']['head']} AS h
               LEFT JOIN {$f_var['mtable']['config']} AS c ON h.area_s_num = c.s_num
-              LEFT JOIN sl.employee AS e ON c.access_empno = e.e09_1
+              LEFT JOIN empno AS e ON c.access_empno = e.empno
               WHERE h.d_date = '0000-00-00 00:00:00'
               AND h.`year` = '{$_POST['year']}'
               AND h.festival = '{$_POST['festival']}'
               {$area}
               ORDER BY h.area_s_num ASC";
 
-  $area_result = mysql_query($area_sql);
-  if( mysql_num_rows($area_result) > 0 ){
+  $area_result = mysqli_query($f_var['con_db'],$area_sql);
+  if( mysqli_num_rows($area_result) > 0 ){
     $data = array();
     $i = 0;
-    while( $area_row = mysql_fetch_assoc($area_result) ){
+    while( $area_row = mysqli_fetch_assoc($area_result) ){
       $data['head'] = $area_row;
       $data['body'] = array();
 
@@ -340,9 +336,9 @@ function u_excel(&$f_var){
               AND i.d_date = '0000-00-00 00:00:00'
               AND b.h_s_num = '{$area_row['s_num']}'            
               ORDER BY b.s_num ASC";
-      $result = mysql_query($sql);
-      if( mysql_num_rows($result) > 0 ){
-        while( $row = mysql_fetch_assoc($result) ){
+      $result = mysqli_query($f_var['con_db'],$sql);
+      if( mysqli_num_rows($result) > 0 ){
+        while( $row = mysqli_fetch_assoc($result) ){
 
           if( !array_key_exists( $row['b_s_num'],$data['body'] ) ){
             $data['body'][ $row['b_s_num'] ] = $row;
@@ -363,7 +359,7 @@ function u_excel(&$f_var){
 
     // 傳送下載的檔頭
     header('Content-Type: application/vnd.ms-excel');  
-    header("Content-Disposition: attachment;filename={$filename}.xls");  
+    header("Content-Disposition: attachment;filename={$filename}.xlsx");  
     header('Cache-Control: max-age=0');  
 
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007'); 
@@ -590,10 +586,10 @@ function u_input(&$f_var) {
   }else{
     $where = '';
   }
-  $result = mysql_query("SELECT * FROM {$f_var['mtable']['config']} 
+  $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']} 
                         WHERE config_key = 'gift_head_area' {$where}");
-  if( mysql_num_rows($result) > 0 ){
-    while( $row = mysql_fetch_assoc($result) ){
+  if( mysqli_num_rows($result) > 0 ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $f_var["tp"]-> newBlock('tb_option');
       $f_var["tp"]-> assign("tv_value",$row['s_num']);
       $f_var["tp"]-> assign("tv_show",$row['config_value']);
@@ -704,13 +700,13 @@ function u_list_repeat(&$f_var){
   // echo '<pre>'.print_r($sql,1).'</pre>';
   // exit;
   $count_tax = 0;
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $f_var['tp']-> newBlock('tb_table_repeat');
     $f_var['tp']-> assign('tv_year',$_POST['year']);
     $f_var['tp']-> assign('tv_festival',$_POST['festival']);
 
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       //依統編跟單位 找出贈禮對象
       $sql_item = "SELECT c.config_value AS area,b.h_s_num,b.company,g.position,g.name 
                   FROM {$f_var['mtable']['body']} AS b
@@ -728,10 +724,10 @@ function u_list_repeat(&$f_var){
       // echo '<pre>'.print_r($sql_item,1).'</pre>';
       // exit;
 
-      $result_item = mysql_query($sql_item);
+      $result_item = mysqli_query($f_var['con_db'],$sql_item);
       $list = array(); //放資料用
       $count = array(); //計算出現次數 rowspan用
-      while( $row_item = mysql_fetch_assoc($result_item) ){
+      while( $row_item = mysqli_fetch_assoc($result_item) ){
         $list[ $row_item['area'] ][ $row_item['company'] ][] = $row_item;
         $count[ $row_item['area'] ]['num']++;
         $count[ $row_item['area'] ][ $row_item['company'] ]++;
@@ -750,7 +746,7 @@ function u_list_repeat(&$f_var){
             $td = '';
 
             if( $i == 0 && $k == 0 && $ind == 0 ){ //最第一個 會有tax_no的
-              $td .= "<td name='tax_no' rowspan=".mysql_num_rows($result_item).">{$row['tax_no']}</td>";
+              $td .= "<td name='tax_no' rowspan=".mysqli_num_rows($result_item).">{$row['tax_no']}</td>";
             }
             if( $ind == 0 ){  //公司裡贈禮對象的第一個 會有公司名稱
               $td .= "<td rowspan=".$count[$area][$company].">{$company}</td>";
@@ -803,21 +799,21 @@ function u_list_guest(&$f_var){
     $area = "AND h.area_s_num = {$_POST['area_s_num']}";
   }
 
-  $area_sql = "SELECT h.*,c.config_value AS area ,e.e09_2 AS `b_name` FROM {$f_var['mtable']['head']} AS h
+  $area_sql = "SELECT h.*,c.config_value AS area ,e.name AS `b_name` FROM {$f_var['mtable']['head']} AS h
               LEFT JOIN {$f_var['mtable']['config']} AS c ON h.area_s_num = c.s_num
-              LEFT JOIN sl.employee AS e ON h.b_empno = e.e09_1
+              LEFT JOIN empno AS e ON h.b_empno = e.empno
               WHERE h.d_date = '0000-00-00 00:00:00'
               AND h.`year` = '{$_POST['year']}'
               AND h.festival = '{$_POST['festival']}'
               {$area}
               ORDER BY h.area_s_num ASC";
 
-  sl_showsql($area_sql);
+  // sl_showsql($area_sql);
 
-  $area_result = mysql_query($area_sql);
-  if( mysql_num_rows($area_result) > 0 ){
+  $area_result = mysqli_query($f_var['con_db'],$area_sql);
+  if( mysqli_num_rows($area_result) > 0 ){
     $f_var['tp']-> newBlock('tb_table_guest');
-    while( $area_row = mysql_fetch_assoc($area_result) ){
+    while( $area_row = mysqli_fetch_assoc($area_result) ){
 
       $f_var['tp']-> newBlock('tb_guest_li');
       $f_var['tp']-> assign('tv_area_name',$area_row['area']);
@@ -844,10 +840,10 @@ function u_list_guest(&$f_var){
                 AND d_date = '0000-00-00 00:00:00'
                 ORDER BY s_num ASC";
 
-      $b_result = mysql_query($b_sql);
-      if( mysql_num_rows($b_result) > 0 ){
+      $b_result = mysqli_query($f_var['con_db'],$b_sql);
+      if( mysqli_num_rows($b_result) > 0 ){
         $i = 0;
-        while( $b_row = mysql_fetch_assoc($b_result) ){
+        while( $b_row = mysqli_fetch_assoc($b_result) ){
           $i++;
           $f_var['tp']-> newBlock('tb_guest_tr'); 
           $f_var['tp']-> assign('tv_i',$i);
@@ -866,9 +862,9 @@ function u_list_guest(&$f_var){
                   LEFT JOIN {$f_var['mtable']['type']} AS t ON i.gift_s_num = t.s_num
                   WHERE i.b_s_num = {$b_row['s_num']} AND i.d_date = '0000-00-00 00:00:00'";
 
-          $i_result = mysql_query($i_sql);
-          if( mysql_num_rows($i_result) > 0 ){
-            while( $i_row = mysql_fetch_assoc($i_result) ){
+          $i_result = mysqli_query($f_var['con_db'],$i_sql);
+          if( mysqli_num_rows($i_result) > 0 ){
+            while( $i_row = mysqli_fetch_assoc($i_result) ){
 
               $f_var['tp']-> newBlock('tb_guest_div'); 
               $f_var['tp']-> assign('tv_position',$i_row['position']);
@@ -916,13 +912,13 @@ function u_list_gift(&$f_var){
             AND t.festival = '{$_POST['festival']}'
           ORDER BY t.price,t.s_num ASC";
 
-  $result = mysql_query($sql);
-  if( mysql_num_rows($result) > 0 ){
+  $result = mysqli_query($f_var['con_db'],$sql);
+  if( mysqli_num_rows($result) > 0 ){
     $f_var['tp']-> newBlock('tb_table_gift');
     $f_var['tp']-> assign('tv_year',$_POST['year']);
     $f_var['tp']-> assign('tv_festival',$_POST['festival']);
     $arr_gift_id = array();
-    while( $row = mysql_fetch_assoc($result) ){
+    while( $row = mysqli_fetch_assoc($result) ){
       $arr_gift_id[] = $row['s_num'];
       $f_var['tp']-> newBlock('tb_gift_name');
       $f_var['tp']-> assign('tv_gift_name',$row['company'].'<br>'.$row['name']."<br>{$row['price']}元");
@@ -940,11 +936,11 @@ function u_list_gift(&$f_var){
     $area = "AND s_num = {$_POST['area_s_num']}";
   }
 
-  $area_result = mysql_query("SELECT * FROM {$f_var['mtable']['config']}
+  $area_result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']}
                         WHERE config_key = 'gift_head_area' {$area}");
-  if( mysql_num_rows($area_result) > 0 ){
+  if( mysqli_num_rows($area_result) > 0 ){
     $data = array();
-    while( $area_row = mysql_fetch_assoc($area_result) ){
+    while( $area_row = mysqli_fetch_assoc($area_result) ){
       $f_var['tp']-> newBlock('tb_gift_tr');
       $f_var['tp']-> assign('tv_area',$area_row['config_value']);
 
@@ -960,11 +956,11 @@ function u_list_gift(&$f_var){
                 AND h.festival = '{$_POST['festival']}'
               GROUP BY i.gift_s_num
               ORDER BY i.gift_price,i.gift_s_num ASC";
-      $result = mysql_query($sql);
+      $result = mysqli_query($f_var['con_db'],$sql);
       $gift = array();
       $total = 0;
-      if( mysql_num_rows($result) > 0 ){
-        while( $row = mysql_fetch_assoc($result) ){
+      if( mysqli_num_rows($result) > 0 ){
+        while( $row = mysqli_fetch_assoc($result) ){
           $total += $row['gift_price']*$row['gift_cnt'];
           $gift[ $row['gift_s_num'] ] = $row;
         }
@@ -1014,8 +1010,7 @@ function u_setvar(&$f_var) {
 
   //echo $_REQUEST.'---------';
   if(is_array($_REQUEST)) { // 有資料才處理
-    while (list($f_fd_name,$f_fd_value) = each($_REQUEST)) {
-      //echo "$f_fd_name=$f_fd_value----";
+    foreach($_REQUEST as $f_fd_name => $f_fd_value){
       $f_var[$f_fd_name] = $f_fd_value;
     }
   }
@@ -1040,14 +1035,12 @@ function u_setvar(&$f_var) {
   $f_var['ie_h_title'] = '禮品管理系統-報表'; // 頁面標題
   $f_var['msub_title'] = '禮品管理系統-報表'; // 程式副標題
   $f_var['mmaxline'] = 10; // 每頁最大筆數
-  $f_var['mdb'] = 'docs'; // db name
-  $f_var['mupload_dir']  = "/home/docs/public_html/gift/gift_upfile/" ; //上傳檔案到此資料夾
+  $f_var['mdb'] = 'heroku'; // db name
+  $f_var['mupload_dir']  = "./gift_upfile/" ; //上傳檔案到此資料夾
   $f_var['mtable'] = array('head'=>'gift_head','body'=>'gift_body','type'=>'gift_type','quota'=>'gift_quota',
                           'config'=>'gift_config','guest'=>'gift_guest','item'=>'gift_item'); // 使用 table 名稱 
   $f_var['tpl'] = 'gift_rpt.tpl'; // 樣版畫面檔
 
-  $f_var['upd_img'] = '<img src="/~sl/img/upd.png" border="0" alt="修改此筆" title="修改此筆">';
-  $f_var['del_img'] = '<img src="/~sl/img/del.png" border="0" alt="作廢此筆" title="作廢此筆">';
 
 
 }

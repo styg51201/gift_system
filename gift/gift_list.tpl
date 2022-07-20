@@ -1134,8 +1134,10 @@
                 return false; //跳出迴圈
               }
             })
-            if( bool ) return false;
-            
+            if( bool ){
+              $('form[name="body_form"] input[name="all_done"]').remove();
+              return false;
+            }
             //判斷 數量或金額 是否為0
             $('form[name="body_form"] input:not(input[type=hidden])').each(function(ind,ele){
               if( $(ele).val() == '0' ){
@@ -1145,11 +1147,15 @@
                 return false; //跳出迴圈
               }
             })
-            if( bool ) return false;
+            if( bool ){
+              $('form[name="body_form"] input[name="all_done"]').remove();
+              return false;
+            }
 
             //判斷金額是否超過預算
             if( +$('th[name="gift_total"]>span').html() > +$('th[name="fina_quota_total"]>span').html() ){
               alert('禮品總金額合計，請勿超過 會計審核總預算 !!');
+              $('form[name="body_form"] input[name="all_done"]').remove();
               return false;
             }
 

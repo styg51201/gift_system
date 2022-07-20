@@ -363,8 +363,11 @@ function u_upd_save(&$f_var){
                 now()";
 
   
-  //會計已審核後，有修改禮品選項的input
+  //會計已審核後(第二階段)，編輯禮品選項
   if( isset($_POST['gift_s_num']) ){
+
+    //TODO 以防前端串改 會計審核金額，需要再確認一次
+
 
     foreach( $_POST['item_id'] as $ind => $val ){
 
@@ -430,7 +433,7 @@ function u_upd_save(&$f_var){
 
     
 
-  }else{
+  }else{ //會計審核前(第一階段)，編輯送禮對象
 
     //作廢處理table->body
     if( $_POST['del_company'] != '' ){
@@ -556,7 +559,6 @@ function u_upd_save(&$f_var){
         }
 
         //處理送禮對象,資料(統編,職稱,姓名)若不同做新增,不做修改
-        //要用 $val 而不是 $tax_no => 是原本傳過來的值,ex: N_1 N_2 12345678_3 會有流水號
         foreach( $_POST[ "{$val}".'_item_id' ] as $i => $item_id ){
           $guest_id = '';
           $position = trim($_POST[ $val.'_position' ][$i]);
