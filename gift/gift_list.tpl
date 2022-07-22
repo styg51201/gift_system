@@ -873,9 +873,9 @@
             //確認是否有 不同單位,但是有相同的客戶(公司)
             if( $('input[name="tax_no[]"]').length > 0 ){
               var tax_no = '';
-              $('td[name="company"]').each(function(ind,ele){
-                if( $(ele).attr('data-tax_no') == 'N' ) return; //沒統編屬於公關 跳過
-                tax_no += ',' + $(ele).attr('data-tax_no');
+              $('input[name="tax_no[]"]').each(function(ind,ele){
+                if( $(ele).val() == 'N' ) return; //沒統編屬於公關 跳過
+                tax_no += ',' + $(ele).val();
               })
               var arr = [];
               $.ajax({
@@ -888,7 +888,6 @@
                     tax_no:tax_no,
                   },
                   success:function(data){
-                    console.log(data)
                     if(data != 'N'){
                       arr = JSON.parse(data)
                     }
@@ -914,12 +913,9 @@
                   return; // == continue
                 }else{
                   tax_no = $(ele).find('input[name="tax_no[]"]').val(); 
-                  if( tax_no == 'N' ){
-                    tax_no = 'N_'+ind; //加上序號
-                  }else{
-                    tax_no = tax_no+'_'+ind; //加上序號
-                  }
-                  $(ele).find('input[name="tax_no[]"]').val( tax_no ) //複值回去
+                  tax_no = tax_no+'_'+ind; //加上序號
+                  
+                  $(ele).find('input[name="tax_no[]"]').val( tax_no ) //賦值回去
                 }
 
                 $(ele).find('input[name="item_id[]"]').attr('name',tax_no+'_item_id[]');
@@ -1153,7 +1149,7 @@
             }
 
             //判斷金額是否超過預算
-            if( +$('th[name="gift_total"]>span').html() > +$('th[name="fina_quota_total"]>span').html() ){
+            if( +$('th[name="gift_total"]>span').html() > +$('th[name="fina_quota_total"]').attr('data-fina') ){
               alert('禮品總金額合計，請勿超過 會計審核總預算 !!');
               $('form[name="body_form"] input[name="all_done"]').remove();
               return false;

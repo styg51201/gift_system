@@ -367,6 +367,18 @@ function u_upd_save(&$f_var){
   if( isset($_POST['gift_s_num']) ){
 
     //TODO 以防前端串改 會計審核金額，需要再確認一次
+    $sql_chk = "SELECT * FROM {$f_var['mtable']['head']}
+                WHERE `s_num` = {$h_s_num}";
+    $result_chk = mysqli_query($f_var['con_db'],$sql_chk);
+    $row_chk = mysqli_fetch_assoc($result_chk);
+    $gift_total = 0;
+    foreach( $_POST['gift_price'] as $ind => $val ){
+      $gift_total += trim($_POST['gift_price'][$ind]) * trim($_POST['gift_cnt'][$ind]);
+    }
+    if($gift_total > $row_chk['fina_quota_total']){
+      $f_var["tp"]-> assign("_ROOT.tv_alert","禮品總金額統計: {$gift_total}元，不得高於會計審核的預算({$row_chk['fina_quota_total']}元)，請重新確認");
+      return;
+    }
 
 
     foreach( $_POST['item_id'] as $ind => $val ){
