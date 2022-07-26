@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <style>
   div.header{
       background-color: #fffada;

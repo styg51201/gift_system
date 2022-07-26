@@ -192,7 +192,8 @@ jQuery.autocomplete = function(input, options) {
 		$results.html("");
 		$input.val(v);
 		hideResultsNow();
-		if (options.onItemSelect) {setTimeout(function() { options.onItemSelect(li) }, 1);}
+		if (options.onItemSelect) {setTimeout(function() { options.onItemSelect(li) }, 0);}
+
 	};
 
 	// selects a portion of the input string
@@ -243,7 +244,7 @@ jQuery.autocomplete = function(input, options) {
 	function hideResults() {
 		if (timeout) clearTimeout(timeout);
 		//upd by 翊靖 原本是200秒改成100秒 
-		timeout = setTimeout(hideResultsNow, 100); 
+		timeout = setTimeout(hideResultsNow, 200); 
 	};
 
 	function hideResultsNow() {

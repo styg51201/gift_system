@@ -213,7 +213,7 @@
       var params = url.searchParams;
 
       //明細表頁面時才執行，關於卷軸滾動時出現thead跟tfoot
-      if( params.get('msel') == '2' ){ 
+      if( params.get('msel') == '?'/*2*/ ){ 
 
         var caption_top = $('.guest_table>caption').offset().top
         var caption_h = $('.guest_table>caption').height()-1
@@ -458,7 +458,7 @@
               $com_input.attr('readonly',false);
               $com_input.attr('placeholder','');
               $(input).parent('td[name="company"]').attr('data-tax_no','N')
-            }else if( val.length == 8 && $com_input.val() != '' ){
+            }else if( val.length == 8 && /^\d+$/.test(val) && $com_input.val() != '' ){
               return; //不讓原本選擇的公司名消失
             }else{
               $(input).parent('td[name="company"]').attr('data-tax_no','')
@@ -539,11 +539,11 @@
                           '<img class="icon pointer his_com_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+
                       '</td>'+
                       '<td colspan="2" name="guest">'+div+'</td>'+
-                      '<td name="avg_rev"><input type="text" name="avg_rev[]" size="10"></td>'+
-                      '<td name="avg_gp"><input type="text" name="avg_gp[]" size="10"></td>'+
-                      '<td name="avg_gpm"><input type="text" name="avg_gpm[]" size="10" readonly placeholder="自動帶出"> %</td>'+
-                      '<td name="base_num"><input type="text" name="base_num[]" size="10" readonly  placeholder="自動帶出"></td>'+
-                      '<td name="quota"><input type="text" name="quota[]" size="10" readonly placeholder="自動帶出"></td>'+
+                      '<td name="avg_rev"><input type="number" name="avg_rev[]" size="10"></td>'+
+                      '<td name="avg_gp"><input type="number" name="avg_gp[]" size="10"></td>'+
+                      '<td name="avg_gpm"><input type="number" name="avg_gpm[]" size="10" readonly placeholder="自動帶出"> %</td>'+
+                      '<td name="base_num"><input type="number" name="base_num[]" size="10" readonly  placeholder="自動帶出"></td>'+
+                      '<td name="quota"><input type="number" name="quota[]" size="10" readonly placeholder="自動帶出"></td>'+
                       '<td colspan=2 name="del"><button type="button" class="del_com btn btn-cancel">刪除此行</button></td>'+
                     '</tr>';
 
@@ -579,11 +579,11 @@
                             /*'<img class="icon pointer his_guest_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">'+*/
                             '<img class="add_guest pointer" src="../picture/加號.png" title="新增對象">'+
                         '</div></td>'+
-                        '<td name="avg_rev"><input type="text" name="avg_rev[]" size="10"></td>'+
-                        '<td name="avg_gp"><input type="text" name="avg_gp[]" size="10"></td>'+
-                        '<td name="avg_gpm"><input type="text" name="avg_gpm[]" size="10" readonly placeholder="自動帶出"> %</td>'+
-                        '<td name="base_num"><input type="text" name="base_num[]" size="10" readonly  placeholder="自動帶出"></td>'+
-                        '<td name="quota"><input type="text" name="quota[]" size="10" readonly placeholder="自動帶出"></td>'+
+                        '<td name="avg_rev"><input type="number" name="avg_rev[]" size="10"></td>'+
+                        '<td name="avg_gp"><input type="number" name="avg_gp[]" size="10"></td>'+
+                        '<td name="avg_gpm"><input type="number" name="avg_gpm[]" size="10" readonly placeholder="自動帶出"> %</td>'+
+                        '<td name="base_num"><input type="number" name="base_num[]" size="10" readonly  placeholder="自動帶出"></td>'+
+                        '<td name="quota"><input type="number" name="quota[]" size="10" readonly placeholder="自動帶出"></td>'+
                         '<td colspan=2 name="del"><button type="button" class="del_com btn btn-cancel">刪除此行</button></td>'+
                       '</tr>';
 
@@ -612,10 +612,10 @@
                 str_company = '<input type="text" name="tax_no[]" value="'+$company.attr('data-tax_no')+'" placeholder="輸入統編" maxlength="8" size="8">'+
                               '<input type="text" name="company[]" value="'+$company.text()+'" '+readonly+' placeholder="公司名稱自動帶出">'+
                               '<img class="icon pointer his_com_btn" src="../picture/箭頭下.png" title="歷史紀錄選單">',
-                str_avg_rev = '<input type="text" name="avg_rev[]" value="'+$avg_rev.text()+'" size="10">',
-                str_avg_gp = '<input type="text" name="avg_gp[]" value="'+$avg_gp.text()+'" size="10">',
-                str_avg_gpm = '<input type="text" name="avg_gpm[]" value="'+$avg_gpm.children('span').text()+'" size="10" readonly placeholder="自動帶出"> %',
-                str_base_num = '<input type="text" name="base_num[]" value="'+$base_num.text()+'" size="10" readonly  placeholder="自動帶出" >',
+                str_avg_rev = '<input type="number" name="avg_rev[]" value="'+$avg_rev.text()+'" size="10">',
+                str_avg_gp = '<input type="number" name="avg_gp[]" value="'+$avg_gp.text()+'" size="10">',
+                str_avg_gpm = '<input type="number" name="avg_gpm[]" value="'+$avg_gpm.children('span').text()+'" size="10" readonly placeholder="自動帶出"> %',
+                str_base_num = '<input type="number" name="base_num[]" value="'+$base_num.text()+'" size="10" readonly  placeholder="自動帶出" >',
                 str_quota = '<input type="text" name="quota[]" size="10" value="'+$quota.text()+'" readonly placeholder="自動帶出">'
             
       
@@ -935,8 +935,8 @@
         //autocomplete
         function autocomplete(input){
 
-          //因為是focus就綁定autocomplete，為了不重覆綁定事件
-          var $event = $(input).data("events");
+          //第一次focus就已綁定autocomplete，為了不重覆綁定事件而做判斷
+          var $event = $._data(input).events
           if( $event && $event['keydown'] ){
             return;
           }
@@ -944,7 +944,7 @@
             "gift_list.php",
             { extraParams:{ ajax_get:'ajax_get_com',rownum:20 },
               resultsClass:'ac_results ac_box',
-              delay:101, //原始碼裡blur消失是設定setimeout 100 ,這邊要多1秒
+              delay:300, 
               width:250,
               minChars:1,
               maxItemsToShow:20,
@@ -964,6 +964,13 @@
             str = str.innerText.split('-'); //autocomplete回傳的型態為obj=>li元素
           }
 
+          if( str[0].length != 8 || !/^\d+$/.test(str[0])){
+            $(input).val(str[0]);
+            alert('統一編號輸入錯誤');
+            return;
+          }
+         
+     
           $(input).parent('td[name="company"]').attr('data-tax_no',str[0])
           $(input).val(str[0]);
           $(input).siblings('input[name="company[]"]').val(str[1])
@@ -1217,7 +1224,7 @@
         <thead class="border o_thead">
           <tr>
             <th rowspan=2 style="width: 3%">項次</th>
-            <th rowspan=2>客戶名稱</th>
+            <th rowspan=2  style="min-width:70px">客戶名稱</th>
             <th colspan=2 style="min-width:130px">送禮對象</th>
             <th colspan=3>單位 : 萬元</th>
             <th>基數</th>

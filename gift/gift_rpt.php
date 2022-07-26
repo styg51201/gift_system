@@ -190,7 +190,7 @@ function repeat_excel(&$f_var){
       ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN); 
 
       //設定同一個統編 同一背景顏色
-      $bg_color = $row_num % 2 == 0 ? 'fef3eb' : 'eaf6f9' ; 
+      $bg_color = $row_num % 2 == 0 ? 'ebf1de' : 'c4d79b' ; 
       $sheet->getStyle("A{$num}:E".(int)($num+$i-1))->getFill()
       ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
       ->getStartColor()->setRGB($bg_color);
@@ -235,7 +235,7 @@ function repeat_excel(&$f_var){
     //thead背景顏色
     $sheet->getStyle("A2:{$col}3")->getFill()
     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-    ->getStartColor()->setRGB('cbcbcb');
+    ->getStartColor()->setRGB('ffffff');
 
     //設定thead邊框
     $sheet->getStyle("A2:{$col}3")
@@ -587,7 +587,7 @@ function u_input(&$f_var) {
     $where = '';
   }
   $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']} 
-                        WHERE config_key = 'gift_head_area' {$where}");
+                        WHERE config_key = 'gift_head_area' and d_date = 0 {$where}");
   if( mysqli_num_rows($result) > 0 ){
     while( $row = mysqli_fetch_assoc($result) ){
       $f_var["tp"]-> newBlock('tb_option');
@@ -622,7 +622,7 @@ function u_input(&$f_var) {
   $f_var["tp"]-> assign("tv_cname",'節日');
   $f_var["tp"]-> assign("tv_name",'festival');
 
-  $festival = array('中秋節','春節');
+  $festival = array('春節','中秋節');
   foreach( $festival as $val ){
     $f_var["tp"]-> newBlock('tb_option');
     $f_var["tp"]-> assign("tv_value",$val);
@@ -937,7 +937,7 @@ function u_list_gift(&$f_var){
   }
 
   $area_result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']}
-                        WHERE config_key = 'gift_head_area' {$area}");
+                        WHERE config_key = 'gift_head_area' and d_date = 0 {$area}");
   if( mysqli_num_rows($area_result) > 0 ){
     $data = array();
     while( $area_row = mysqli_fetch_assoc($area_result) ){

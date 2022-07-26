@@ -1299,7 +1299,7 @@ function u_save(&$f_var){
 
 
   if( $result ){
-    echo sl_jreplace($f_var['mphp_name'].'.php?msel=2&f_s_num='.mysqli_insert_id($f_var['con_db']) );
+    echo sl_jreplace($f_var['mphp_name'].'.php?msel=2&f_s_num='.mysqli_insert_id($f_var['con_db'])."&f_year={$_POST['year']}&f_festival={$_POST['festival']}" );
     // echo '新增成功..';
   }else{
     $f_var["tp"]-> assign("_ROOT.tv_alert",'規劃表新增失敗!!');
@@ -1331,7 +1331,7 @@ function u_in_scr(&$f_var) {
   }
 
   $result = mysqli_query($f_var['con_db'],"SELECT * FROM {$f_var['mtable']['config']} 
-                        WHERE config_key = 'gift_head_area' 
+                        WHERE config_key = 'gift_head_area' AND d_date = 0
                         {$sql_access} ");
 
   $f_var['fd']['area_s_num']['show'][] = "請選擇";
@@ -1442,7 +1442,11 @@ function u_setvar(&$f_var) {
     $f_var['f_year'] = date('Y'); //年份
   }
   if($f_var['f_festival'] == NULL){
-    $f_var['f_festival'] = '中秋節'; //節日
+    if( date('m')>2 && date('m')<10 ){
+      $f_var['f_festival'] = '中秋節'; //節日
+    }else{
+      $f_var['f_festival'] = '春節'; //節日
+    }
   }
   if($f_var['admin'] == NULL){
     $f_var['admin'] == 'N';
@@ -1466,8 +1470,8 @@ function u_setvar(&$f_var) {
 
 
 
-  $f_var['s_festival']['show'] = array('中秋節','春節'); //節日選項
-  $f_var['s_festival']['value'] = array('中秋節','春節'); //節日選項
+  $f_var['s_festival']['show'] = array('春節','中秋節'); //節日選項
+  $f_var['s_festival']['value'] = array('春節','中秋節'); //節日選項
 
 
   //年份選項,從2021開始 到 +1年(明年)

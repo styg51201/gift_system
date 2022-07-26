@@ -383,7 +383,11 @@ function u_setvar(&$f_var) {
     $f_var['f_year'] = date('Y'); //年份
   }
   if(!isset($f_var['f_festival'])){
-    $f_var['f_festival'] = '中秋節'; //節日
+    if( date('m')>2 && date('m')<10 ){
+      $f_var['f_festival'] = '中秋節'; //節日
+    }else{
+      $f_var['f_festival'] = '春節'; //節日
+    }
   }
   
   // 未傳入值之預設值設定 End ..................................................//
@@ -402,8 +406,8 @@ function u_setvar(&$f_var) {
   $f_var['tpl'] = 'gift_type.tpl'; // 樣版畫面檔
 
 
-  $f_var['s_festival']['show'] = array('中秋節','春節'); //節日選項
-  $f_var['s_festival']['value'] = array('中秋節','春節'); //節日選項
+  $f_var['s_festival']['show'] = array('春節','中秋節'); //節日選項
+  $f_var['s_festival']['value'] = array('春節','中秋節'); //節日選項
 
   //年份選項,從2021開始 到 +1年(明年)
   for($i = 2021; $i<=(date('Y')+1); $i++){

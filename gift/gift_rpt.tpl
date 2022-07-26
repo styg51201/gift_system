@@ -48,7 +48,7 @@
         tfoot_top = $('.guest_table.active>.o_tfoot').offset().top
         tfoot_h = $('.guest_table.active>.o_tfoot').height()
 
-    
+        /*
         $(window).scroll(function(){
           var s_top = $(this).scrollTop()
           var s_bottom = $(this).scrollTop() + $(this).height()
@@ -134,7 +134,7 @@
 
 
         $(window).scroll() //頁面出現時，執行一次
-
+        */
       }
 
       //重複名單的css變更
@@ -366,7 +366,7 @@
         <thead class="border o_thead">
           <tr>
             <th rowspan=2>項次</th>
-            <th rowspan=2>客戶名稱</th>
+            <th rowspan=2 style="min-width:70px">客戶名稱</th>
             <th colspan=2 style="min-width:130px">送禮對象</th>
             <th colspan=3>單位 : 萬元</th>
             <th>基數</th>
