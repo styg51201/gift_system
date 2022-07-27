@@ -94,6 +94,7 @@ u_setvar($f_var);
 <script>
   $(document).ready(function(){
 
+    /*
     var userAgent = navigator.userAgent;
     if( userAgent.indexOf('Chrome') == -1  ){
       alert('請使用 Google 的「Chrome瀏覽器」開啟，謝謝');
@@ -105,6 +106,7 @@ u_setvar($f_var);
         event.preventDefault();
       }
     })
+    */
 
     //hover時 根據自身box的顏色=>icon做顏色變化
     $('a.box').hover(
@@ -119,7 +121,7 @@ u_setvar($f_var);
 </script>
 
 <div>
-  <h1 style="color:red;font-weight:500;text-align:center">請使用 Google 的「Chrome瀏覽器」開啟，謝謝</h1>
+  <!-- <h1 style="color:red;font-weight:500;text-align:center">請使用 Google 的「Chrome瀏覽器」開啟，謝謝</h1> -->
 
 </div>
 <div class="container">
