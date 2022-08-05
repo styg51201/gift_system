@@ -256,7 +256,7 @@ include_once('../init/sl_header.php');
     </div>
     <div>
       <h5>系統介紹</h5>
-      <ul>
+      <ul> 
         <li>用途說明</li>
         <li>流程介紹</li>
         <li>注意事項</li>
