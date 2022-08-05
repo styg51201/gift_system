@@ -11,6 +11,7 @@
       letter-spacing: .1rem;
       text-align:center;
       color:orange;
+      margin:0px;
   }
 </style>
 

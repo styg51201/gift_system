@@ -1032,8 +1032,8 @@ function u_setvar(&$f_var) {
   $f_var['mphp_name'] = u_showproc(); //程式名稱
   $f_var['show_year'] = '4';
   $f_var['msel_name'] = array('1'=>'新增','2'=>'修改','3'=>'刪除','4'=>'瀏覽','5'=>'查詢','6'=>'未定義','7'=>'列印'); // msel 中文
-  $f_var['ie_h_title'] = '禮品管理系統-報表'; // 頁面標題
-  $f_var['msub_title'] = '禮品管理系統-報表'; // 程式副標題
+  $f_var['ie_h_title'] = '年節禮品管理系統-報表'; // 頁面標題
+  $f_var['msub_title'] = '年節禮品管理系統-報表'; // 程式副標題
   $f_var['mmaxline'] = 10; // 每頁最大筆數
   $f_var['mdb'] = 'heroku'; // db name
   $f_var['mupload_dir']  = "./gift_upfile/" ; //上傳檔案到此資料夾
