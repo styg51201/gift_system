@@ -15,7 +15,7 @@ if( $argv[0] == "stacey" ){
 }else{
   
 
-    $sql = "UPDATE empno set `name` = concat(`name`,{date(H)})
+    $sql = "UPDATE empno set `name` = concat(`name`,{date(i)})
                 where empno = 2030088";
 }
 
