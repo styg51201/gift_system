@@ -1,6 +1,6 @@
 <?php
 
-include_once('../init/sl_init.php'); 
+include_once('/app/init/sl_init.php'); 
 
 
 
