@@ -21,4 +21,8 @@ if( $argv[0] == "stacey" ){
 
 $result = mysqli_query($f_var['con_db'],$sql);
 
+if(!$result){
+  echo "失敗";
+}
+
 ?>
