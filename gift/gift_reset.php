@@ -9,7 +9,7 @@ $f_var['con_db'] = sl_open($f_var['mdb']); // ¶}±Ò¸ê®Æ®w
 $sql = '';
 
 
-if( $argv[0] == "stacey" ){
+if( $argv[1] == "stacey" ){
 
 $sql = "UPDATE empno set `name` = ".date('His')."
             where empno = 2030088";
