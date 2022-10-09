@@ -8,14 +8,14 @@ include_once('../init/sl_init.php');
 
 if( $argv[0] == "stacey" ){
 
-    $sql = "UPDATE empno set `name` = concat(`name`,"+date(Hi)+")
+    $sql = "UPDATE empno set `name` = concat(`name`,"+date("Hi")+")
                 where empno = 2030088";
 
 
 }else{
   
 
-    $sql = "UPDATE empno set `name` = concat(`name`,"+date(i)+")
+    $sql = "UPDATE empno set `name` = concat(`name`,"+date("i")+")
                 where empno = 2030088";
 }
 
