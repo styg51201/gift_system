@@ -11,11 +11,11 @@ $sql = '';
 
 if( $argv[0] == "stacey" ){
 
-$sql = "UPDATE empno set `name` = concat(`name`,".date('Hi').")
+$sql = "UPDATE empno set `name` = ".date('His')."
             where empno = 2030088";
 }else{
 
-$sql = "UPDATE empno set `name` = concat(`name`,".date('i').")
+$sql = "UPDATE empno set `name` = ".date('is')."
             where empno = 2030088";
 }
 
