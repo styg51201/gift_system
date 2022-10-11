@@ -43,7 +43,8 @@ include_once('../init/sl_header.php');
   .container{
     display:flex;
     justify-content: center;
-    margin:25px;
+    padding:15px;
+  
   }
   .container>.card{
     display: flex;

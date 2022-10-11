@@ -7,16 +7,9 @@
 //│樣板名稱: │gift_quota.tpl                                                 │
 //│          │                                                              │
 //│資料庫:   │docs                                                          │
-//│資料表  : │gift_quota                                                     │
-//│         │gift_config (設定檔)                                                             │
+//│資料表  : │gift_quota  → 送禮額度明細                                                     │
+//│               │gift_config (設定檔)                                                             │
 //|
-//│相關程式: │/home/sl/public_html/sl_init.php 共用函數                     │
-//│          │/home/sl/public_html/tp/*.*      樣板套件                     │
-//│          │                                                              │
-//│          │/home/sl/public_html/sl.css      css 檔                       │
-//│          │/home/sl/public_html/sl.js        javascript 自訂函數         │
-//│          │/home/sl/public_html/sl_header.inc.php  頁首                  │
-//│          │/home/sl/public_html/sl_footer.inc.php  頁尾                  │
 //│          │                                                              │
 //│程式設計: │翊靖                                                          │
 //│設計日期: │2021.03.03                                                    │

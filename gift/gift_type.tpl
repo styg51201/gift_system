@@ -47,10 +47,10 @@
     $(document).ready(function(){
 
       $('[name="file"]').change(function(){
-        var max_size = 1024*100 /*100KB限制*/
+        var max_size = 1024*500 /*500KB限制*/
         var file_size =  $(this)[0].files[0]['size'] 
         if( file_size > max_size ){
-          alert('上傳的檔案大小為 '+ (file_size/1024).toFixed(2) +'KB，超過100KB')
+          alert('上傳的檔案大小為 '+ (file_size/1024).toFixed(2) +'KB，超過500KB')
           $(this).val('')
         }
         

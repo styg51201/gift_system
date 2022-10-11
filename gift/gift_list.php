@@ -1,30 +1,26 @@
 <?php 
-//┌─────┬───────────────────────────────┐
-//│系統名稱: │gift_list　  　                                              │
-//│         │                                                              │
-//│程式名稱: │gift_list.php                                                │
-//│程式說明: │禮品管理系統-明細表                                      │
-//│樣板名稱: │gift_list.tpl                                                 │
-//│          │                                                              │
-//│資料庫  : │docs                                                          │
+//┌─────┬───────────────────────────────
+//│系統名稱: │gift_list　  　                                              
+//│         │                                                              
+//│程式名稱: │gift_list.php                                                
+//│程式說明: │禮品管理系統-明細表                                      
+//│樣板名稱: │gift_list.tpl                                                 
+//│          │                                                              
+//│資料庫  : │docs                                                          
 //│資料表  : |                                 
-//|         |gift_guest  → 送禮客戶資料主檔
-//|         |gift_head   → 每年各節的送禮主檔
-//|         |gift_body   → 每年各節的送禮客戶明細(必須與gift_head做關聯)
-//|         |gift_quota  → 送禮額度明細
-//|         |gift_config → 年節送禮系統相關設定檔(輸入各區權限、會計權限、營收及毛利%數)
-//|         |
-//│相關程式: │/home/sl/public_html/sl_init.php 共用函數                     │
-//│          │/home/sl/public_html/tp/*.*      樣板套件                     │
-//│          │                                                              │
-//│          │/home/sl/public_html/sl.css      css 檔                       │
-//│          │/home/sl/public_html/sl.js        javascript 自訂函數         │
-//│          │/home/sl/public_html/sl_header.inc.php  頁首                  │
-//│          │/home/sl/public_html/sl_footer.inc.php  頁尾                  │
-//│          │                                                              │
-//│程式設計: │翊靖                                                          │
-//│設計日期: │2021.03.11                                                    │
-//└─────┴───────────────────────────────┘
+//|                |  gift_guest  → 送禮客戶資料主檔
+//|                |  gift_head   → 每年各節的送禮主檔
+//|                |  gift_body   → 每年各節的送禮客戶明細(必須與gift_head做關聯)
+//|                |  gift_quota  → 送禮額度明細
+//|                |  gift_config → 年節送禮系統相關設定檔(輸入各區權限、會計權限、營收及毛利%數)
+//|                |
+//│相關程式: 
+// |               │ /home/sl/public_html/sl_init.php 共用函數                     
+//│               |  /home/sl/public_html/tp/*.*      樣板套件                     
+//│              │                                                             
+//│程式設計: │翊靖                                                          
+//│設計日期: │2021.03.11                                                    
+//└─────┴───────────────────────────────
 
 include_once('../init/sl_init.php'); 
 u_setvar($f_var);
@@ -1442,11 +1438,7 @@ function u_setvar(&$f_var) {
     $f_var['f_year'] = date('Y'); //年份
   }
   if($f_var['f_festival'] == NULL){
-    if( date('m')>2 && date('m')<10 ){
       $f_var['f_festival'] = '中秋節'; //節日
-    }else{
-      $f_var['f_festival'] = '春節'; //節日
-    }
   }
   if($f_var['admin'] == NULL){
     $f_var['admin'] == 'N';

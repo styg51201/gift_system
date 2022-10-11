@@ -7,15 +7,8 @@
 //│樣板名稱: │gift_type.tpl                                                 │
 //│          │                                                              │
 //│資料庫  : │docs                                                          │
-//│資料表  : │gift_type                                                     │
+//│資料表  : │gift_type  → 禮品品項表                                  
 //│          │                                                              │
-//│相關程式: │/home/sl/public_html/sl_init.php 共用函數                     │
-//│          │/home/sl/public_html/tp/*.*      樣板套件                     │
-//│          │                                                              │
-//│          │/home/sl/public_html/sl.css      css 檔                       │
-//│          │/home/sl/public_html/sl.js        javascript 自訂函數         │
-//│          │/home/sl/public_html/sl_header.inc.php  頁首                  │
-//│          │/home/sl/public_html/sl_footer.inc.php  頁尾                  │
 //│          │                                                              │
 //│程式設計: │翊靖                                                          │
 //│設計日期: │2021.02.26                                                    │
@@ -332,7 +325,7 @@ function u_in_scr(&$f_var) {
           if( $row[ $val['ename'] ] == $val['value'][$ind] ){
             $f_var["tp"]-> assign("tv_selected",'selected');
           }
-          if( !$f_var['f_s_num'] && date('Y') == $val['value'][$ind] ){ //f_s_num 有值 = 新增的話,預設今年
+          if( !$f_var['f_s_num'] && date('Y') == $val['value'][$ind] ){ //f_s_num 有值 = 新增,預設今年
             $f_var["tp"]-> assign("tv_selected",'selected');
           }
         }  
@@ -508,7 +501,7 @@ function u_setvar(&$f_var) {
     'pkey'      => isset($f_var['f_s_num']) ? '' : 'Y', //有值 = 修改，不用pkey
     'size'      => '',
     'maxlength' => '',
-    'memo'      => '(檔案大小限100KB)',
+    'memo'      => '(檔案大小限500KB)',
   );
 
   $f_var['fd']['content'] = array(

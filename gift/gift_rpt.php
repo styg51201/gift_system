@@ -13,17 +13,10 @@
 //|         |gift_body   → 每年各節的送禮客戶明細(必須與gift_head做關聯)
 //|         |gift_quota  → 送禮額度明細
 //|         |gift_config → 年節送禮系統相關設定檔(輸入各區權限、會計權限、營收及毛利%數)
-//|         |
-//│相關程式: │/home/sl/public_html/sl_init.php 共用函數                     │
-//│          │/home/sl/public_html/tp/*.*      樣板套件                     │
-//│          │                                                              │
-//│          │/home/sl/public_html/sl.css      css 檔                       │
-//│          │/home/sl/public_html/sl.js        javascript 自訂函數         │
-//│          │/home/sl/public_html/sl_header.inc.php  頁首                  │
-//│          │/home/sl/public_html/sl_footer.inc.php  頁尾                  │
+//|         
 //│          │                                                              │
 //│程式設計: │翊靖                                                          │
-//│設計日期: │2021.04.01                                                   │
+//│設計日期: │2021.04.01                                                   
 //└─────┴───────────────────────────────┘
 
 include_once('../init/sl_init.php'); 
