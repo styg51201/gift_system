@@ -10,6 +10,7 @@ $f_var['con_db'] = sl_open($f_var['mdb']);
 
 if( $argv[1] == "stacey" ){
 
+  
   // 每晚0點，DB資料重制
   $sql = file_get_contents("/app/gift/gift_reset.sql");
   $arr = explode(';',$sql);
